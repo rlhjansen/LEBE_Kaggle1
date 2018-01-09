@@ -1,11 +1,90 @@
 8-1-2017
 
-opdracht gekozen: Mercari price suggestion
-
+Opdracht gekozen: Mercari price suggestion
 
 
 
 9-1-2017
 
-github & pycharm opgezet.
+
+#############################
+## Vondsten & Beslissingen ##
+#############################
+
+Github & Pycharm opgezet.
+Bepaald om in python 2 te werken
+Aanwezig iedere dag om 11.
+
+
+#############################
+##        Uitgezocht       ##
+#############################
+
+Reitze
+Kernel competition.*
+Programmastructuur opgezet, notulen geschreven.
+
+
+*Kernel competition houd in dat je je machine learning algoritme op de server van
+kaggle gaat laten trainen. dit is om ervoor te zorgen dat elk team dezelfde specs
+gebruikt.
+
+Hoe dat moet vergt nog uitzoekwerk
+
+Shelby
+datacleaning & undestanding
+
+Maurits
+Kaggle data science guide
+
+
+
+#############################
+##     Voorlopige taken    ##
+#############################
+
+
+Maurits:
+Uitzoeken pandas
+
+
+Reitze:
+Mail schrijven of het doel is om effectieve pricing te creeeren of om pricing te
+genereren die past bij wat een goede score geeft op kaggle.
+Handige samenwerkings programs zoeken/fixen
+python 2 installeren
+
+
+Shelby:
+Uitzoeken Knime
+Uitzoeken missing value approaches
+
+
+#############################
+## Voorlopige doelen Data  ##
+#############################
+
+
+
+Maurits:
+Library uitzoeken om catagoriëen samen te voegen (hoofdletters/spelfouten)
+
+onverdeeld:
+product bundels herkennen*
+
+
+*Bij de kaggle opdracht staat dat mensen hun producten ook gebundeld kunnen verkopen.
+denk hierbij aan bijvoorbeeld een compleet pak, of een bankenstelsel ipv een losse bank.
+hiervoor kan het handig zijn wat te bedenken.
+
+
+Reitze:
+Dictionary maken* die clustering van tags weergeeft. (onderzoeksopties)
+structuur missing values onderzoeken
+
+
+*
+key:value
+tag:[(othertag, #), (yetAnotherTag, #), ...]
+
 
