@@ -1,0 +1,14 @@
+
+
+Shelby
+
+Structure extraction
+https://books.google.nl/books?hl=nl&lr=&id=1SylCgAAQBAJ&oi=fnd&pg=PP1&dq=predict+prices+machine+learning&ots=8IANukmBCd&sig=FMuUj6FSA5lbWvHN5gzMZg0ZmLg#v=onepage&q=predict%20prices%20machine%20learning&f=false
+
+Codes of Item conditions
+https://www.kaggle.com/c/mercari-price-suggestion-challenge/discussion/44228
+
+Maurits
+
+Walkthrough data cleaning
+https://www.kdnuggets.com/2016/03/doing-data-science-kaggle-walkthrough-cleaning-data.html
