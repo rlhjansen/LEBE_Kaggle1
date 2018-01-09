@@ -20,10 +20,21 @@ Aanwezig iedere dag om 11.
 ##        Uitgezocht       ##
 #############################
 
+links in links.txt
+
+Shelby
+
+datacleaning & undestanding
+
+Maurits
+
+Kaggle data science guide
+
+
 Reitze
+
 Kernel competition.*
 Programmastructuur opgezet, notulen geschreven.
-
 
 *Kernel competition houd in dat je je machine learning algoritme op de server van
 kaggle gaat laten trainen. dit is om ervoor te zorgen dat elk team dezelfde specs
@@ -31,17 +42,13 @@ gebruikt.
 
 Hoe dat moet vergt nog uitzoekwerk
 
-Shelby
-datacleaning & undestanding
-
-Maurits
-Kaggle data science guide
-
-
 
 #############################
 ##     Voorlopige taken    ##
 #############################
+
+onverdeeld
+uitzoeken hoe merknamen met spaties erin als enkel merk te herkennen.
 
 
 Maurits:
@@ -49,6 +56,7 @@ Uitzoeken pandas
 
 
 Reitze:
+
 Mail schrijven of het doel is om effectieve pricing te creeeren of om pricing te
 genereren die past bij wat een goede score geeft op kaggle.
 Handige samenwerkings programs zoeken/fixen
@@ -56,6 +64,7 @@ python 2 installeren
 
 
 Shelby:
+
 Uitzoeken Knime
 Uitzoeken missing value approaches
 
@@ -67,10 +76,14 @@ Uitzoeken missing value approaches
 
 
 Maurits:
+
 Library uitzoeken om catagoriëen samen te voegen (hoofdletters/spelfouten)
 
 onverdeeld:
+
 product bundels herkennen*
+structuur/trends missing values onderzoeken. vindbaarheid missing values onderzoeken
+
 
 
 *Bij de kaggle opdracht staat dat mensen hun producten ook gebundeld kunnen verkopen.
@@ -79,8 +92,10 @@ hiervoor kan het handig zijn wat te bedenken.
 
 
 Reitze:
+
 Dictionary maken* die clustering van tags weergeeft. (onderzoeksopties)
-structuur missing values onderzoeken
+dit onafhankelijk van type data (woorden in titel & woorden in categoriëen hebben gelden allen als tokens
+
 
 
 *
