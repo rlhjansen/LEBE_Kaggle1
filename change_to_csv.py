@@ -2,9 +2,6 @@ import csv
 import os
 
 
-
-
-
 # example:
 # change_to_csv("test.tsv", "test.csv")
 # result = csv file van deze data
