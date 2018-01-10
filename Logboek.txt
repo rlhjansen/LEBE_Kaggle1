@@ -102,4 +102,16 @@ dit onafhankelijk van type data (woorden in titel & woorden in categoriëen hebb
 key:value
 tag:[(othertag, #), (yetAnotherTag, #), ...]
 
+10-1-2017
+
+Reitze:
+
+Bezig geweest functies te schrijven om de data op te schonen.
+nog te doen:
+functie schrijven die door de beschrijvingen heenloopt.
+functie schrijven die tijdens het doorheenlopen per woord kijkt of het voorkomt
+in de dictionary van gedeeltelijke merknamen of de dictionary van merknamen
+functie aan de data bij merk het goede merk toevoegd
+
+comments
 
