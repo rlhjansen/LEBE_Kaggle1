@@ -106,6 +106,9 @@ tag:[(othertag, #), (yetAnotherTag, #), ...]
 
 Reitze:
 
+erachter gekomen dat ik stiekem nog leuk doorschrijf in python 3.
+maakt niet uit behalve voor de print statements, moet ik nog aanpassen
+
 Bezig geweest functies te schrijven om de data op te schonen.
 nog te doen:
 functie schrijven die door de beschrijvingen heenloopt.
