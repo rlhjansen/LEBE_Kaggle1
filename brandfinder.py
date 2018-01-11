@@ -179,5 +179,5 @@ def gather_keywords(infile, outfile):
 # Todo function needs to be written
 #
 
-def line_to_vec(line, dict)
+def line_to_vec(line, dict):
     pass
