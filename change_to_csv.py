@@ -5,6 +5,9 @@ import os
 # example:
 # change_to_csv("test.tsv", "test.csv")
 # result = csv file van deze data
+# was nodig voor Knime, heeft voorlopig geen nut meer.
+#
+
 def change_to_csv(filename, outname, enc="utf8"):
     with open(os.path.join(os.pardir, filename), encoding=enc) as tsvin:
         with open(os.path.join(os.pardir, outname), 'w', encoding=enc) as csvout:

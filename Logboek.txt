@@ -123,3 +123,13 @@ Ik ben bezig geweest met het uitzoeken hoe KNIME werkt door redelijk veel tutori
 Ik heb geprobeerd te werken met de data in KNIME, maar de data is te groot wat voor problemen zorgt.
 KNIME werkt dus niet voor ons project.
 
+
+11-1-2017
+
+Reitze
+erachtergekomen dat er merknamen zijn die ongelukkig uitvallen, dat mensen de
+merknamen verkeerd schrijven en dat er bij gepoogde merkherkenning nog wel eens
+verkeerde merken herkend worden omdat deze ook in de beschrijvingen staan.
+
+als gevolg hiervan besloten merkherkenning te skippen en verder te gaan met alle
+woorden (met categorie als gehele woorden wellicht) als deel van de input.

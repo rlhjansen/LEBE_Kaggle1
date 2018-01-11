@@ -1,6 +1,20 @@
+Reitze
 
+unicode lowercase <-> uppercase:
+https://stackoverflow.com/questions/2145826/convert-unicode-utf-8-string-to-lower-upper-case-using-pure-pythonic-library
 
 Shelby
+
+Mercari price suggestion pre-processing:
+https://www.kaggle.com/konohayui/mercari-price-suggestion-preprocess
+
+Analytics for an Online Retailer: Demand Forecasting and Price Optimization
+http://www.hbs.edu/faculty/Publication%20Files/kris%20Analytics%20for%20an%20Online%20Retailer_6ef5f3e6-48e7-4923-a2d4-607d3a3d943c.pdf
+
+
+Predicting the Price of Used Cars using Machine Learning Techniques
+https://www.ripublication.com/irph/ijict_spl/ijictv4n7spl_17.pdf
+
 
 Structure extraction
 https://books.google.nl/books?hl=nl&lr=&id=1SylCgAAQBAJ&oi=fnd&pg=PP1&dq=predict+prices+machine+learning&ots=8IANukmBCd&sig=FMuUj6FSA5lbWvHN5gzMZg0ZmLg#v=onepage&q=predict%20prices%20machine%20learning&f=false

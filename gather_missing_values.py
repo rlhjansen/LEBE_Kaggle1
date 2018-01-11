@@ -1,6 +1,10 @@
 import csv
 import os
 
+#
+#creëert files die laten zien waar de missende waarden zitten
+#
+
 with open(os.path.join(os.pardir, "train.tsv"), encoding="utf8") as tsvin:
     with open(os.path.join(os.pardir, "missval.tsv"), 'w') as missout:
         tsvs = csv.reader(tsvin, delimiter='\t')
