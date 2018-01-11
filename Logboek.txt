@@ -118,3 +118,8 @@ functie aan de data bij merk het goede merk toevoegd
 
 comments
 
+Shelby:
+Ik ben bezig geweest met het uitzoeken hoe KNIME werkt door redelijk veel tutorials te bekijken.
+Ik heb geprobeerd te werken met de data in KNIME, maar de data is te groot wat voor problemen zorgt.
+KNIME werkt dus niet voor ons project.
+
