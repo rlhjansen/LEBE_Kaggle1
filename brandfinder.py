@@ -1,11 +1,18 @@
 from __future__ import print_function
-import os, csv, pickle
+import os, csv, pickle, re
+import numpy as np
 
 #
 # verzameld alle merken uit de input file
 # additional=False neemt eerdere input niet mee/overwrite oorspronkelijke file
 # additional=True voegt nieuwe merken toe
 #
+
+
+name_discr_pattern = re.compile(r'[^\s\w_]+') # What will remain
+number_pattern = re.compile(r'[^\s\w_.]+') # What will remain
+category_pattern = re.compile(r'[^\s\w_./\'&,]+') # What will remain
+
 
 def write_brands_to_file(file, outname, additional=False):
     brands = set()
@@ -92,7 +99,7 @@ def recognize_brands(_partdict, descrline):
 
 
 #
-# creëert een file waarin per item ofwel het merk ofwel de mogelijke merken genoteerd staan
+# creert een file waarin per item ofwel het merk ofwel de mogelijke merken genoteerd staan
 # geschrapt
 #
 def write_possible_brands(infile, outfile, _dict):
@@ -114,11 +121,13 @@ def write_possible_brands(infile, outfile, _dict):
             outf.close()
         inf.close()
 
+
+
+"""
 infile = os.path.join(os.pardir, "trainColumnSwitched.tsv")
 outfile = os.path.join(os.pardir, "possiblebrands.tsv")
 dictloc = os.path.join(os.pardir, "newBrandDict")
 
-"""
 with open(dictloc, "rb") as mydict:
     mydictLoaded = pickle.load(mydict)
     write_possible_brands(infile, outfile, mydictLoaded)
@@ -146,38 +155,101 @@ with open(dictloc, "rb") as mydict:
 
 #"""
 
-#
-# Todo needs behaviour for shipping info
-#
+def convert_alphanumerical(row):
+    return [number_pattern.sub('', row[0]),
+                   name_discr_pattern.sub(' ', row[1]),
+                   number_pattern.sub('', row[2]),
+                   category_pattern.sub('', row[3]),
+                   name_discr_pattern.sub(' ', row[4]),
+                   name_discr_pattern.sub(' ', row[5]), row[6],
+                   number_pattern.sub('', row[7])]
 
-def gather_keywords(infile, outfile):
+def gather_keywords(infile, outfile, *args):
     wordset = set()
-    with open(infile, encoding="utf8") as inf:
+    with open(infile) as inf:
         infr = csv.reader(inf, delimiter="\t")
-        with open(outfile, "w", encoding="utf8") as outf:
-            writer = csv.writer(outf, delimiter='\t', skipinitialspace=True)
-            for row in infr:
-                row = [i.decode('utf-8').lower() for i in row]
-                wordset.add(set(row[1].split(" ")))
-                wordset.add(set(["condition"+row[2]]))
-                wordset.add(set(row[3].split("/\\")))
-                wordset.add(set(row[4].split(" ")))
-                wordset.add(set(row[5].split(" ")))
-            outf.close()
+        for row in infr:
+            row = [i.decode('utf-8').lower() for i in row]
+            row = convert_alphanumerical(row)
+            wordset |= (extranct_line_features(row, *args))
         inf.close()
     i = 0
     worddict = {}
     for word in wordset:
         worddict[word] = i
         i += 1
-    with open(os.path.join(os.pardir, outfile), 'wb') as out:
+    for key in worddict:
+        print(key)
+    with open(outfile, 'wb') as out:
         pickle.dump(worddict, out)
-        out.close()
+
+
+
+
+def extranct_line_features(row, *args):
+    wordset = set()
+    for key in args:
+        if key == "standard":
+            wordset |= set(row[1].split(" "))  # woorden uit de naam als input
+            wordset |= set(["condition" + row[2]])  # conditions als input (1,2,3,4,5)
+            wordset |= set(re.split("/|", row[3]))  # categorien als input
+            wordset |= set(row[4].split(" "))  # woorden uit merknamen als input (voor wanneer merk uit beschrjving gehaald zou kunnen worden)
+            wordset |= set([row[4]])  # gehele merken als input
+            wordset |= set(row[5].split(" "))  # woorden uit de beschrijving
+            wordset |= set(["shippingYes" if row[6] == 1 else "shippingNo"])
+            break
+        if key == "name":
+            wordset |= set(row[1].split(" "))  # woorden uit de naam als input
+        if key == "condition":
+            wordset |= set(["condition" + row[2]])  # conditions als input (1,2,3,4,5)
+        if key == "category":
+            wordset |= set(re.split("/|", row[3]))  # categorien als input
+        if key == "brandWords":
+            wordset |= set(row[4].split(
+                " "))  # woorden uit merknamen als input (voor wanneer merk uit beschrjving gehaald zou kunnen worden)
+        if key == "brand":
+            wordset |= set(row[4])  # gehele merken als input
+        if key == "descrWords":
+            wordset |= set(row[5].split(" "))  # woorden uit de beschrijving
+        if key == "shipping":
+            wordset |= set(["shippingYes" if row[6] == 1 else "shippingNo"])
+    return wordset
+
+
+def features_to_input(wordset, _dict, size):
+    whole = np.array([0.0]*size)
+    try:
+        ones = np.array([_dict[word] for word in wordset])
+    except:
+        raise("you're not using the right dictionary")
+        exit(1)
+    whole[ones] = 1.0
+    return whole
 
 
 #
-# Todo function needs to be written
+# create dictionary
 #
+infile = os.path.join(os.pardir,"trainColumnSwitched.tsv")
+outfile = os.path.join(os.pardir, "keyword_dict")
 
-def line_to_vec(line, dict):
-    pass
+
+gather_keywords(infile, outfile, "standard")
+
+
+with open(infile) as inf:
+    infr = csv.reader(inf, delimiter="\t")
+    with open(outfile, "rb") as kd:
+        lkd = pickle.load(kd)
+        size = len(lkd)
+        j = 0
+        for key in lkd:
+            print(key)
+        for row in infr:
+            row = [i.decode('utf-8').lower() for i in row]
+            row = convert_alphanumerical(row)
+            wordset = (extranct_line_features(row, "standard"))
+            print(features_to_input(wordset, lkd, size))
+            j += 1
+            if j == 100:
+                break

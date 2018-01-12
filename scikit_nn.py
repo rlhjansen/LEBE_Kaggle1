@@ -96,8 +96,11 @@ def train_regressor(data, labels):
 def main():
     """The main function of the program"""
     data, labels = load_data()
+    print("step1")
     n_words, name_map = map_words(0, data[:,COLUMN_NAME])
+    print("step2")
     n_words, brand_map = map_words(n_words, data[:,COLUMN_BRAND])
+    print("step3")
     desc_map = map_words(n_words, data[:,COLUMN_DESCRIPTION])
     
     train_data, train_labels, val_data, val_labels = split_train_val(data, labels)

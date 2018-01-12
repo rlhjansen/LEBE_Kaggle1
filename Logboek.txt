@@ -137,3 +137,11 @@ woorden (met categorie als gehele woorden wellicht) als deel van de input.
 
 Shelby:
 Literatuuronderzoek gedaan naar vergelijkbare problemen en mogelijke plotjes bekeken voor de data
+
+12-1-2017
+
+Reitze
+Functies geschreven die
+1) trainingset omzetten in een dictionary van input waarden
+2) deze waarden schoonmaken (gekke tekens eruit)
+3) deze converteren naar input voor neural network of ander ML programma
