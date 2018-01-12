@@ -133,3 +133,7 @@ verkeerde merken herkend worden omdat deze ook in de beschrijvingen staan.
 
 als gevolg hiervan besloten merkherkenning te skippen en verder te gaan met alle
 woorden (met categorie als gehele woorden wellicht) als deel van de input.
+
+
+Shelby:
+Literatuuronderzoek gedaan naar vergelijkbare problemen en mogelijke plotjes bekeken voor de data
