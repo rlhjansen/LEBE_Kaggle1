@@ -31,9 +31,9 @@ with open(os.path.join(os.pardir, "test.tsv"), encoding="utf8") as testdatatsv:
 #
 # creates a copy of the training data where price& description are switched
 #
-with open(os.path.join(os.pardir, "train.tsv"), encoding="utf8") as traindatatsv:
+with open(os.path.join(os.pardir, "train.tsv")) as traindatatsv:
     traindata = csv.reader(traindatatsv, delimiter='\t')
-    with open(os.path.join(os.pardir, "trainColumnSwitched.tsv"), "w", encoding="utf8") as trainswitchtsv:
+    with open(os.path.join(os.pardir, "trainColumnSwitched.tsv"), "w") as trainswitchtsv:
         writer = csv.writer(trainswitchtsv, delimiter='\t', skipinitialspace=True)
         for row in traindata:
             writer.writerow([row[0], row[1], row[2], row[3], row[4], row[7], row[6], row[5]])
