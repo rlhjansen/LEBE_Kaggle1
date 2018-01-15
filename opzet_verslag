@@ -1,0 +1,16 @@
+Introductie + probleem stelling
+
+Kaggle is een platform voor analytische competities met machine learning problemen.
+Het helpt bedrijven en organisaties om de beste modellen te verkrijgen voor het voorspellen en beschrijven van hun
+datasets.
+Tegenwoordig worden er veel producten online verkocht.
+Kleding heeft sterke seizoensprijzen en wordt sterk beïnvloed door merknamen,
+terwijl de prijs van elektronica beïnvloed wordt door productspecificaties.
+
+De Kaggle opdracht ‘Mercari Price Suggestion Challenge’ wordt georganiseerd door Mercari,
+de grootste winkel software applicatie van Japan.
+Mercari biedt een manier voor iedereen om producten via hun mobiele apparaat te kopen en verkopen.
+Mercari wilt een nauwkeurige prijs suggestie bieden aan de verkopers.
+
+In deze competitie wordt er gevraagd om een algoritme te schrijven die automatisch de juiste productprijzen voorstelt
+gebaseerd op de productnaam, categorie, merknaam en ingevoerde tekstbeschrijvingen.
