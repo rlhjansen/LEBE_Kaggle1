@@ -145,3 +145,9 @@ Functies geschreven die
 1) trainingset omzetten in een dictionary van input waarden
 2) deze waarden schoonmaken (gekke tekens eruit)
 3) deze converteren naar input voor neural network of ander ML programma
+
+Shelby:
+onderzoeksvraag en deelvragen proberen te bedenken, nog niet helemaal uitgekomen
+data analyseren om er plotjes van te maken, af hankelijk van de deelvragen
+Als deelvragen bekend zijn dan weet ik welke plotjes ik kan gebruiken
+labboek1 geschreven om in te leveren
