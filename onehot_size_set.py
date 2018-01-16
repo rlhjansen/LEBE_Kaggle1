@@ -35,7 +35,7 @@ def gather_keywords_cutoff(INFILE, OUTFILE, **kwargs):
     i = 0
     worddictnums = {}
     for key in worddict.keys():
-        if worddict[key] >= kwargs.get("cutoff"):
+        if worddict[key] > kwargs.get("cutoff"):
             worddictnums[key] = i
             #print(key, i)
             i += 1
@@ -141,10 +141,10 @@ def splitdata(data, labels, ratio=0.7):
     val_labels = rand_labels[i:]
     return train_data, train_labels, val_data, val_labels
 
-def train_with_batches(inputfile, batch_size, **kwargs):
+def train_with_batches(inputfile, batch_size, restart=True, **kwargs):
     idstring = "feature_cut_"+str(kwargs.get("cutoff"))+" "+kwargs.get("returntype")
     dictionaryfile = os.path.join(os.pardir, idstring)
-    if kwargs.get("restart") == True:
+    if restart:
         gather_keywords_cutoff(inputfile, dictionaryfile, origin=kwargs.get("origin"), cutoff=kwargs.get("cutoff", 0))
     with open(inputfile) as inf:
         with open(dictionaryfile) as kd:
@@ -167,4 +167,4 @@ def train_with_batches(inputfile, batch_size, **kwargs):
         print("finito")
 
 inputfile = os.path.join(os.pardir, "trainColumnSwitched.tsv")
-train_with_batches(inputfile, 500, restart=True, origin="standard", cutoff=2, returntype="dict")
+train_with_batches(inputfile, 500, restart=True, origin="standard", cutoff=1, returntype="dict")
