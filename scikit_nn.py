@@ -8,7 +8,7 @@ import numpy as np
 PATH_TRAIN = "../train.tsv"
 PATH_TEST = "../test.tsv"
 COLUMN_LABEL = 5
-BATCH_SIZE = 10000  # Don't make this number much larger than 100000
+BATCH_SIZE = 100000  # Don't make this number much larger than 100000
 
 # The following constants are the columns in the "data" variable
 COLUMN_NAME = 0

@@ -3,6 +3,7 @@ import os, csv, pickle, re
 import numpy as np
 
 
+
 # regex to clean data
 NAME_DISCR_PATTERN = re.compile(r'[^\s\w_]+')  # What will remain
 NUMBER_PATTERN = re.compile(r'[^\s\w_.]+')  # What will remain
@@ -21,14 +22,14 @@ def convert_alphanumerical(row):
 
 
 def gather_keywords_cutoff(INFILE, OUTFILE, **kwargs):
-    """example input: INFILE, OUTFILE, origin='standard', cutoff=4"""
+    """example input: INFILE, OUTFILE, origin='standard', cutoff=4, returntype="dict"""
     worddict = {}
     with open(INFILE) as inf:
         infr = csv.reader(inf, delimiter="\t")
         for row in infr:
             row = [i.lower() for i in row]
             row = convert_alphanumerical(row)
-            res = extract_line_words_count(worddict, row, origin=kwargs.get("origin"))
+            res = extract_line_words_count(worddict, row, origin=kwargs.get("origin"), returntype="dict")
             worddict = res
         inf.close()
     i = 0
@@ -36,13 +37,15 @@ def gather_keywords_cutoff(INFILE, OUTFILE, **kwargs):
     for key in worddict.keys():
         if worddict[key] >= kwargs.get("cutoff"):
             worddictnums[key] = i
+            #print(key, i)
             i += 1
             #print("kwargs.get('cutoff')", kwargs.get("cutoff"))
-    with open(outfile, 'wb') as out:
+    with open(OUTFILE, 'wb') as out:
         for key in worddictnums.keys():
             #print(key, worddictnums.get(key))
             pass
         pickle.dump(worddictnums, out)
+        print("saves")
 
 
 def add_list_to_dict(_dict, list):
@@ -60,65 +63,35 @@ def add_list_to_dict(_dict, list):
 # else:
 #   returns set for line with used words.
 def extract_line_words_count(worddict, row, **kwargs):
-    mydict = {}
-    if kwargs.get("origin") == "standard":
+    """
+    # if kwargs.get("returntype") == "dict")
+    #   returns dictionary for line with k:v = word:#
+    # else:
+    #   returns set for line with used words."""
+    if kwargs.get("returntype") == "dict":
         _list = []
         for inst in [row[1].split(" "), ["condition" + row[2]], re.split("/|", row[3]), row[4].split(" "), [row[4]], row[5].split(" "), ["shippingYes" if row[6] == 1 else "shippingNo"]]:
             _list.extend(inst)
         mydict = add_list_to_dict(worddict, _list)
-        """"
-        if key == "name":
-            add_list_to_dict(worddict, row[1].split(" "))  # woorden uit de naam als input
-        if key == "condition":
-            add_list_to_dict(worddict, ["condition" + row[2]])  # conditions als input (1,2,3,4,5)
-        if key == "category":
-            add_list_to_dict(worddict, re.split("/|", row[3]))  # categorien als input
-        if key == "brandWords":
-            add_list_to_dict(worddict, row[4].split(
-                " "))  # woorden uit merknamen als input (voor wanneer merk uit beschrjving gehaald zou kunnen worden)
-        if key == "brand":
-            add_list_to_dict(worddict, row[4])  # gehele merken als input
-        if key == "descrWords":
-            add_list_to_dict(worddict, row[5].split(" "))  # woorden uit de beschrijving
-        if key == "shipping":
-            add_list_to_dict(worddict,
-                             ["shippingYes" if row[6] == 1 else "shippingNo"])
-        """
-    return mydict
+        return mydict
+    else:
+        return extranct_line_features(row)
 
 
-def extranct_line_features(row, *args):
+def extranct_line_features(row):
     wordset = set()
-    for key in args:
-        if key == "standard":
-            wordset |= set(row[1].split(" "))  # woorden uit de naam als input
-            wordset |= set(["condition" + row[2]])  # conditions als input (1,2,3,4,5)
-            wordset |= set(re.split("/|", row[3]))  # categorien als input
-            wordset |= set(row[4].split(" "))  # woorden uit merknamen als input (voor wanneer merk uit beschrjving gehaald zou kunnen worden)
-            wordset |= set([row[4]])  # gehele merken als input
-            wordset |= set(row[5].split(" "))  # woorden uit de beschrijving
-            wordset |= set(["shippingYes" if row[6] == 1 else "shippingNo"])
-            break
-        if key == "name":
-            wordset |= set(row[1].split(" "))  # woorden uit de naam als input
-        if key == "condition":
-            wordset |= set(["condition" + row[2]])  # conditions als input (1,2,3,4,5)
-        if key == "category":
-            wordset |= set(re.split("/|", row[3]))  # categorien als input
-        if key == "brandWords":
-            wordset |= set(row[4].split(
-                " "))  # woorden uit merknamen als input (voor wanneer merk uit beschrjving gehaald zou kunnen worden)
-        if key == "brand":
-            wordset |= set(row[4])  # gehele merken als input
-        if key == "descrWords":
-            wordset |= set(row[5].split(" "))  # woorden uit de beschrijving
-        if key == "shipping":
-            wordset |= set(["shippingYes" if row[6] == 1 else "shippingNo"])
+    wordset |= set(row[1].split(" "))  # woorden uit de naam als input
+    wordset |= set(
+        ["condition" + row[2]])  # conditions als input (1,2,3,4,5)
+    wordset |= set(re.split("/|", row[3]))  # categorien als input
+    wordset |= set(row[4].split(
+        " "))  # woorden uit merknamen als input (voor wanneer merk uit beschrjving gehaald zou kunnen worden)
+    wordset |= set([row[4]])  # gehele merken als input
+    wordset |= set(row[5].split(" "))  # woorden uit de beschrijving
+    wordset |= set(["shippingYes" if row[6] == 1 else "shippingNo"])
     return wordset
 
-
 def features_to_input(wordset, _dict, size):
-    """Change a wordset into an array compatible with the algorithm."""
     whole = np.array([0.0]*size)
     try:
         ones = [_dict.get(word, 0) for word in wordset]
@@ -129,10 +102,9 @@ def features_to_input(wordset, _dict, size):
 
 
 
-def convert_to_npdata(infile_iterator, _dictionary, batchsize=1000):
+def convert_to_npdata(infile_iterator, _dictionary, batchsize=1000, **kwargs):
     data = []
     labels = []
-    size = len(_dictionary)
     continuation = True
     for _ in range(batchsize):
         try:
@@ -140,20 +112,18 @@ def convert_to_npdata(infile_iterator, _dictionary, batchsize=1000):
         except StopIteration:
             continuation = False
             break
-        row = [i.decode('utf-8').lower() for i in row]
+        row = [i.lower() for i in row]
         row = convert_alphanumerical(row)
-        wordset = extranct_line_features(row, "standard")
+        wordset = extract_line_words_count({}, row, returntype=kwargs.get("returntype"))
         try:
-            data.append(features_to_input(wordset, _dictionary, size))
+            data.append(wordset)
             labels.append(row[7])
         except(MemoryError):
             print("Use a smaller batch size")
             break
 
-    data_array = np.array(data)
     labels_array = np.array(labels)
-    print(np.sum(data_array, axis=0))
-    return data_array, labels_array, continuation
+    return np.array(data), labels_array, continuation
 
 
 
@@ -171,7 +141,9 @@ def splitdata(data, labels, ratio=0.7):
     val_labels = rand_labels[i:]
     return train_data, train_labels, val_data, val_labels
 
-def train_with_batches(inputfile, dictionaryfile, batch_size, **kwargs):
+def train_with_batches(inputfile, batch_size, **kwargs):
+    idstring = "feature_cut_"+str(kwargs.get("cutoff"))+" "+kwargs.get("returntype")
+    dictionaryfile = os.path.join(os.pardir, idstring)
     if kwargs.get("restart") == True:
         gather_keywords_cutoff(inputfile, dictionaryfile, origin=kwargs.get("origin"), cutoff=kwargs.get("cutoff", 0))
     with open(inputfile) as inf:
@@ -180,15 +152,19 @@ def train_with_batches(inputfile, dictionaryfile, batch_size, **kwargs):
             infr = csv.reader(inf, delimiter="\t")
             lkd = pickle.load(kd)
             while continuation:
-                data, labels, continuation = convert_to_npdata(infr, lkd, batchsize=batch_size)
+                data, labels, continuation = convert_to_npdata(infr, lkd, batchsize=batch_size, returntype=kwargs.get("returntype"))
+                if kwargs.get("returntype") == "dict":
+                    pass
+                else:
+                    for s in data:
+                        pass
                 train_data, train_labels, val_data, val_labels = splitdata(data, labels)
+                print("runs completely")
                 #
                 # some machine learning function
                 #
         numpy_array = np.array(data)
-        print(np.sum(numpy_array, axis=0))
-
+        print("finito")
 
 inputfile = os.path.join(os.pardir, "trainColumnSwitched.tsv")
-dictionaryfile = os.path.join(os.pardir, "featuredict")
-train_with_batches(inputfile, dictionaryfile, 500, origin="standard", cutoff=2, restart=False)
+train_with_batches(inputfile, 500, restart=True, origin="standard", cutoff=2, returntype="dict")
