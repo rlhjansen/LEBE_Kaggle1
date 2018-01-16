@@ -28,7 +28,8 @@ def gather_keywords_cutoff(INFILE, OUTFILE, **kwargs):
         for row in infr:
             row = [i.lower() for i in row]
             row = convert_alphanumerical(row)
-            extract_line_words_count(worddict, row, kwargs.get("origin"))
+            res = extract_line_words_count(worddict, row, origin=kwargs.get("origin"))
+            worddict = res
         inf.close()
     i = 0
     worddictnums = {}
@@ -36,9 +37,11 @@ def gather_keywords_cutoff(INFILE, OUTFILE, **kwargs):
         if worddict[key] >= kwargs.get("cutoff"):
             worddictnums[key] = i
             i += 1
-    kwargstring = "".join([str(kwargs[key]) for key in kwargs.keys()])
-    OUTFILE += kwargstring
-    with open(OUTFILE, 'wb') as out:
+            #print("kwargs.get('cutoff')", kwargs.get("cutoff"))
+    with open(outfile, 'wb') as out:
+        for key in worddictnums.keys():
+            #print(key, worddictnums.get(key))
+            pass
         pickle.dump(worddictnums, out)
 
 
@@ -49,20 +52,21 @@ def add_list_to_dict(_dict, list):
             _dict[word] = 1
         else:
             _dict[word] += 1
+    return _dict
 
-
-def extract_line_words_count(worddict, row, _list):
-    for key in _list:
-        if key == "standard":
-            add_list_to_dict(worddict, row[1].split(" "))  # woorden uit de naam als input
-            add_list_to_dict(worddict, ["condition" + row[2]])  # conditions als input (1,2,3,4,5)
-            add_list_to_dict(worddict, re.split("/|", row[3]))  # categorien als input
-            add_list_to_dict(worddict, row[4].split(" "))  # woorden uit merknamen als input (voor wanneer merk uit beschrjving gehaald zou kunnen worden)
-            add_list_to_dict(worddict, [row[4]])  # gehele merken als input
-            add_list_to_dict(worddict, row[5].split(" "))  # woorden uit de beschrijving
-            add_list_to_dict(worddict,
-                             ["shippingYes" if row[6] == 1 else "shippingNo"])
-            break
+#
+# if kwargs.get("returntype") == "dict")
+#   returns dictionary for line with k:v = word:#
+# else:
+#   returns set for line with used words.
+def extract_line_words_count(worddict, row, **kwargs):
+    mydict = {}
+    if kwargs.get("origin") == "standard":
+        _list = []
+        for inst in [row[1].split(" "), ["condition" + row[2]], re.split("/|", row[3]), row[4].split(" "), [row[4]], row[5].split(" "), ["shippingYes" if row[6] == 1 else "shippingNo"]]:
+            _list.extend(inst)
+        mydict = add_list_to_dict(worddict, _list)
+        """"
         if key == "name":
             add_list_to_dict(worddict, row[1].split(" "))  # woorden uit de naam als input
         if key == "condition":
@@ -79,7 +83,8 @@ def extract_line_words_count(worddict, row, _list):
         if key == "shipping":
             add_list_to_dict(worddict,
                              ["shippingYes" if row[6] == 1 else "shippingNo"])
-    return worddict
+        """
+    return mydict
 
 
 def extranct_line_features(row, *args):
@@ -116,7 +121,7 @@ def features_to_input(wordset, _dict, size):
     """Change a wordset into an array compatible with the algorithm."""
     whole = np.array([0.0]*size)
     try:
-        ones = np.array([_dict.get(word, 0) for word in wordset])
+        ones = [_dict.get(word, 0) for word in wordset]
     except:
         raise("you're not using the right dictionary")
     whole[ones] = 1.0
@@ -143,9 +148,7 @@ def convert_to_npdata(infile_iterator, _dictionary, batchsize=1000):
             labels.append(row[7])
         except(MemoryError):
             print("Use a smaller batch size")
-            print(len(data))
             break
-        print(features_to_input(wordset, _dictionary, size))
 
     data_array = np.array(data)
     labels_array = np.array(labels)
@@ -153,12 +156,6 @@ def convert_to_npdata(infile_iterator, _dictionary, batchsize=1000):
     return data_array, labels_array, continuation
 
 
-
-INFILE = os.path.join(os.pardir, "trainColumnSwitched.tsv")
-OUTFILE = os.path.join(os.pardir, "keyword_dict")
-
-gather_keywords_cutoff(INFILE, OUTFILE, origin="standard", cutoff=4)
-print(convert_to_npdata(INFILE, OUTFILE))
 
 
 def splitdata(data, labels, ratio=0.7):
@@ -174,15 +171,14 @@ def splitdata(data, labels, ratio=0.7):
     val_labels = rand_labels[i:]
     return train_data, train_labels, val_data, val_labels
 
-
-def train_with_batches(inputfile, dictionaryfile, batch_size):
+def train_with_batches(inputfile, dictionaryfile, batch_size, **kwargs):
+    if kwargs.get("restart") == True:
+        gather_keywords_cutoff(inputfile, dictionaryfile, origin=kwargs.get("origin"), cutoff=kwargs.get("cutoff", 0))
     with open(inputfile) as inf:
         with open(dictionaryfile) as kd:
             continuation = True
             infr = csv.reader(inf, delimiter="\t")
             lkd = pickle.load(kd)
-            size = len(lkd)
-            j = 0
             while continuation:
                 data, labels, continuation = convert_to_npdata(infr, lkd, batchsize=batch_size)
                 train_data, train_labels, val_data, val_labels = splitdata(data, labels)
@@ -192,3 +188,7 @@ def train_with_batches(inputfile, dictionaryfile, batch_size):
         numpy_array = np.array(data)
         print(np.sum(numpy_array, axis=0))
 
+
+inputfile = os.path.join(os.pardir, "trainColumnSwitched.tsv")
+dictionaryfile = os.path.join(os.pardir, "featuredict")
+train_with_batches(inputfile, dictionaryfile, 500, origin="standard", cutoff=2, restart=False)
