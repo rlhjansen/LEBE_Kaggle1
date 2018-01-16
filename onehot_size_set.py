@@ -3,30 +3,27 @@ import os, csv, pickle, re
 import numpy as np
 
 
-
-#
 # regex to clean data
-#
-name_discr_pattern = re.compile(r'[^\s\w_]+') # What will remain
-number_pattern = re.compile(r'[^\s\w_.]+') # What will remain
-category_pattern = re.compile(r'[^\s\w_./\'&,]+') # What will remain
+NAME_DISCR_PATTERN = re.compile(r'[^\s\w_]+')  # What will remain
+NUMBER_PATTERN = re.compile(r'[^\s\w_.]+')  # What will remain
+CATEGORY_PATTERN = re.compile(r'[^\s\w_./\'&,]+')  # What will remain
 
 
-# use regex on row
 def convert_alphanumerical(row):
-    return [number_pattern.sub('', row[0]),
-                   name_discr_pattern.sub(' ', row[1]),
-                   number_pattern.sub('', row[2]),
-                   category_pattern.sub('', row[3]),
-                   name_discr_pattern.sub(' ', row[4]),
-                   name_discr_pattern.sub(' ', row[5]), row[6],
-                   number_pattern.sub('', row[7])]
+    """use regeox on row"""
+    return [NUMBER_PATTERN.sub('', row[0]),
+                   NAME_DISCR_PATTERN.sub(' ', row[1]),
+                   NUMBER_PATTERN.sub('', row[2]),
+                   CATEGORY_PATTERN.sub('', row[3]),
+                   NAME_DISCR_PATTERN.sub(' ', row[4]),
+                   NAME_DISCR_PATTERN.sub(' ', row[5]), row[6],
+                   NUMBER_PATTERN.sub('', row[7])]
 
 
-# example: gather_keywords(infile, outfile, origin="standard", cutoff=4)
-def gather_keywords_cutoff(infile, outfile, **kwargs):
+def gather_keywords_cutoff(INFILE, OUTFILE, **kwargs):
+    """example input: INFILE, OUTFILE, origin='standard', cutoff=4"""
     worddict = {}
-    with open(infile) as inf:
+    with open(INFILE) as inf:
         infr = csv.reader(inf, delimiter="\t")
         for row in infr:
             row = [i.lower() for i in row]
@@ -40,19 +37,18 @@ def gather_keywords_cutoff(infile, outfile, **kwargs):
             worddictnums[key] = i
             i += 1
     kwargstring = "".join([str(kwargs[key]) for key in kwargs.keys()])
-    outfile += kwargstring
-    with open(outfile, 'wb') as out:
+    OUTFILE += kwargstring
+    with open(OUTFILE, 'wb') as out:
         pickle.dump(worddictnums, out)
 
 
-
 def add_list_to_dict(_dict, list):
+    """Add all words in a list to a dictionary."""
     for word in list:
         if not _dict.get(word):
             _dict[word] = 1
         else:
             _dict[word] += 1
-
 
 
 def extract_line_words_count(worddict, row, _list):
@@ -85,6 +81,7 @@ def extract_line_words_count(worddict, row, _list):
                              ["shippingYes" if row[6] == 1 else "shippingNo"])
     return worddict
 
+
 def extranct_line_features(row, *args):
     wordset = set()
     for key in args:
@@ -114,13 +111,14 @@ def extranct_line_features(row, *args):
             wordset |= set(["shippingYes" if row[6] == 1 else "shippingNo"])
     return wordset
 
+
 def features_to_input(wordset, _dict, size):
+    """Change a wordset into an array compatible with the algorithm."""
     whole = np.array([0.0]*size)
     try:
         ones = np.array([_dict.get(word, 0) for word in wordset])
     except:
         raise("you're not using the right dictionary")
-        exit(1)
     whole[ones] = 1.0
     return whole
 
@@ -156,11 +154,12 @@ def convert_to_npdata(infile_iterator, _dictionary, batchsize=1000):
 
 
 
-infile = os.path.join(os.pardir,"trainColumnSwitched.tsv")
-outfile = os.path.join(os.pardir, "keyword_dict")
+INFILE = os.path.join(os.pardir, "trainColumnSwitched.tsv")
+OUTFILE = os.path.join(os.pardir, "keyword_dict")
 
-gather_keywords_cutoff(infile, outfile, origin="standard", cutoff=4)
-print(convert_to_npdata(infile, outfile))
+gather_keywords_cutoff(INFILE, OUTFILE, origin="standard", cutoff=4)
+print(convert_to_npdata(INFILE, OUTFILE))
+
 
 def splitdata(data, labels, ratio=0.7):
     """Returns a training and a validation array"""
@@ -174,6 +173,7 @@ def splitdata(data, labels, ratio=0.7):
     train_labels = rand_labels[:i]
     val_labels = rand_labels[i:]
     return train_data, train_labels, val_data, val_labels
+
 
 def train_with_batches(inputfile, dictionaryfile, batch_size):
     with open(inputfile) as inf:
