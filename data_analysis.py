@@ -93,12 +93,23 @@ def store(obj, path):
         cPickle.dump(obj, out_file)
 
 
+def string_occurance(string, words):
+    """Returns the indexes in which rows a string occurs."""
+    indexes = []
+    for i, row in np.ndenumerate(words):
+        if string in row:
+            indexes.append(i[0])
+    return np.array(indexes)
+
+
 def main():
     """The main function of the program."""
     data, labels = load_data()
     words = sentence_to_words(data)
     # store(words, PATH_WORD_FILE)
-    count_words(words)
+    # count_words(words)
+    indexes = string_occurance('xl', words)
+    print(data[indexes])
 
 
 main()
