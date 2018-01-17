@@ -5,12 +5,13 @@ import re
 from collections import Counter
 import matplotlib.pyplot as plt
 import numpy as np
+from nltk.corpus import stopwords
 
 PATH_TRAIN = "../train.tsv"
 PATH_TEST = "../test.tsv"
 PATH_WORD_FILE = "../words.tsv"
 COLUMN_LABEL = 5
-BATCH_SIZE = 100000  # Don't make this number much larger than 100000
+BATCH_SIZE = 10000  # Don't make this number much larger than 100000
 
 # The following constants are the columns in the "data" variable
 COLUMN_NAME = 0
@@ -34,25 +35,25 @@ def count_words(words):
     count1 = Counter(count0.values())
 
     # How long would the vector matrix be if words that occur <= than n_times
-    num = len(count0.keys())
-    print(num)
-    for n in range(1, 51):
-        num -= count1[n]
-        print("The vector would be", num, "long for n value:", n)
+    #num = len(count0.keys())
+    #print(num)
+    #for n in range(1, 51):
+    #    num -= count1[n]
+    #    print("The vector would be", num, "long for n value:", n)
 
     # The most common words
     for word, n in count0.most_common(10):
         print(word, "occurs", n, "times")
 
     # A plot a about the distribution of word use.
-    num = len(count0)
-    y = []
-    for _, n in count0.most_common(num):
-        if n not in y:
-            y.append(n)
-    plt.plot(y[1:])
-    plt.ylabel("Occurances")
-    plt.show()
+    #num = len(count0)
+    #y = []
+    #for _, n in count0.most_common(num):
+    #    if n not in y:
+    #        y.append(n)
+    #plt.plot(y[1:])
+    #plt.ylabel("Occurances")
+    #plt.show()
 
 
 def load_data():
@@ -81,8 +82,8 @@ def sentence_to_words(data):
                   row[COLUMN_DESCRIPTION])
         string = re.compile(r'[^\s\w_]+').sub(' ', string)  # removes all non-alfanumeric characters
         string = string.lower()
-        word_arr = np.array(string.split(' '))
-        word_arr = word_arr[word_arr != '']
+        s = set(stopwords.words('english'))
+        word_arr = filter(lambda w: not w in s, string.split())
         words.append(word_arr)
     return np.array(words)
 
@@ -107,9 +108,7 @@ def main():
     data, labels = load_data()
     words = sentence_to_words(data)
     # store(words, PATH_WORD_FILE)
-    # count_words(words)
-    indexes = string_occurance('xl', words)
-    print(data[indexes])
-
+    count_words(words)
+    #indexes = string_occurance('xl', words)
 
 main()

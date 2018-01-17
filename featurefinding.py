@@ -102,7 +102,7 @@ gather_keywords(infile, outfile, "standard")
 
 infile = os.path.join(os.pardir,"trainColumnSwitched.tsv")
 outfile = os.path.join(os.pardir, "keyword_dict")
-BATCHSIZE = 1000
+BATCHSIZE = 10
 
 #
 # converts to a numpy data array, still working on, batchsize is incredibly small
@@ -110,15 +110,18 @@ BATCHSIZE = 1000
 def convert_to_npdata(infile, outfile):
     data = []
     with open(infile) as inf:
+        print("test1")
         infr = csv.reader(inf, delimiter="\t")
         with open(outfile, "rb") as kd:
+            print("test2")
             lkd = pickle.load(kd)
             size = len(lkd)
             j = 0
             for key in lkd:
-                #print(key)
+                print("test3")
                 pass
             for row in infr:
+                print("test4")
                 row = [i.decode('utf-8').lower() for i in row]
                 row = convert_alphanumerical(row)
                 wordset = (extranct_line_features(row, "standard"))
@@ -131,6 +134,7 @@ def convert_to_npdata(infile, outfile):
                 #print(features_to_input(wordset, lkd, size))
                 j += 1
                 if j == BATCHSIZE:
+                    print("test5")
                     break
     return np.array(data)
 
