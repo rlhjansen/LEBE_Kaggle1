@@ -36,9 +36,8 @@ def count_words(words):
     # How long would the vector matrix be if words that occur <= than n_times
     num = len(count0.keys())
     print(num)
-    for n in range(1, 11):
+    for n in range(1, 51):
         num -= count1[n]
-        print(count1[n])
         print("The vector would be", num, "long for n value:", n)
 
     # The most common words
@@ -49,13 +48,10 @@ def count_words(words):
     num = len(count0)
     y = []
     for _, n in count0.most_common(num):
-        y.append(n)
-        if False or n not in y:
+        if n not in y:
             y.append(n)
-    print(num)
-    print(len(y))
     plt.plot(y[1:])
-    plt.ylabel("Occurances.")
+    plt.ylabel("Occurances")
     plt.show()
 
 
