@@ -13,7 +13,7 @@ BATCH_SIZE = 10000  # Don't make this number much larger than 100000
 DATA_SIZE = sum(1 for line in open(PATH_TRAIN))  # Number of \n in train file
 THRESH = 50  # How often needs a word to occur before it is used
 
-# The following constants are the columns in the "data" variable
+# The following constants are the columns in each "data" variable
 COLUMN_NAME = 0
 COLUMN_CONDITION = 1
 COLUMN_CATEGORY = 2
@@ -29,6 +29,11 @@ PATH_WORDS = "../words.tsv"
 PATH_WORD_MAP = "../word_map.tsv"
 PATH_WORD_COUNT = "../word_count.tsv"
 PATH_INPUT_VECTOR = "../in_vec.tsv"
+
+
+def categorical_data(data):
+    """Return a vectorized form of the category column"""
+    pass
 
 
 def count_words(words):
@@ -56,9 +61,9 @@ def data_to_input(num_data, words, labels, word_map):
 
 
 def numeric_data(data):
-    """Return an array of floats with for condition and shipping"""
-    conditions = data[:,COLUMN_CONDITION]
-    shipping = data[:,COLUMN_SHIPPING]
+    """Return an array of floats for condition and shipping"""
+    conditions = data[:, COLUMN_CONDITION]
+    shipping = data[:, COLUMN_SHIPPING]
     num_data = np.array([conditions, shipping])
     return num_data.T
 
@@ -72,12 +77,12 @@ def load_data(start, size):
 
     with open(PATH_TRAIN) as f:
         for _ in range(start):
-            f.readline() 
+            f.readline()
         for _ in range(size):
             line = f.readline()
             line = line[:-1]
             line = line.split("\t")
-            label =line[COLUMN_LABEL]
+            label = line[COLUMN_LABEL]
             line = line[1:COLUMN_LABEL] + line[COLUMN_LABEL+1:]
             data.append(np.array(line))
             labels.append(label)
@@ -139,7 +144,7 @@ def main():
     words = sentence_to_words(data)
     num_data = numeric_data(data)
     word_count = count_words(words)
-    word_map = map_words(words, word_count, thresh=50)
+    word_map = map_words(words, word_count, thresh=THRESH)
     in_vec = data_to_input(num_data, words, labels, word_map)
     store(in_vec, PATH_INPUT_VECTOR)
 
