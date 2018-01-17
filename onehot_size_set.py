@@ -2,7 +2,7 @@ from __future__ import print_function
 import os, csv, pickle, re
 import numpy as np
 
-
+INVEC_FILE = "../invec.tsv"
 
 # regex to clean data
 NAME_DISCR_PATTERN = re.compile(r'[^\s\w_]+')  # What will remain
@@ -116,14 +116,13 @@ def convert_to_npdata(infile_iterator, _dictionary, batchsize=1000, **kwargs):
         row = convert_alphanumerical(row)
         wordset = extract_line_words_count({}, row, returntype=kwargs.get("returntype"))
         try:
-            data.append(wordset)
+            data.append([_dictionary.get(i) for i in wordset if _dictionary.get(i)])
             labels.append(row[7])
         except(MemoryError):
             print("Use a smaller batch size")
             break
 
-    labels_array = np.array(labels)
-    return np.array(data), labels_array, continuation
+    return np.array(data), np.array(labels), continuation
 
 
 
@@ -141,8 +140,38 @@ def splitdata(data, labels, ratio=0.7):
     val_labels = rand_labels[i:]
     return train_data, train_labels, val_data, val_labels
 
+def derive_filename():
+    base = "../invec_"
+    threshstring = "tresh"+str(THRESH)
+    end = ".tsv"
+    retval = base+threshstring+end
+    return retval
+
+def store(arr, path):
+    with open(path, "a") as vec_file:
+        for row in arr:
+            string = "\t".join([str(row[i]) for i in range(row.shape[0])])
+            vec_file.write(string)
+    vec_file.close()
+
+def set_to_invec(data, labels, _dict):
+    n_datapoints = len(data)
+    n_variables = len(_dict)+1
+    invecs = [None]*n_datapoints
+    for i in range(n_datapoints):
+        invec = np.zeros((n_variables+1), dtype=np.float)
+        invec[[j for j in data[i]]] = 1.0
+        try:
+            invec[-1] = labels[i]
+        except:
+            print(labels[i])
+            invec[-1] = 0.0
+        invecs[i] = invec
+    return invecs
+
+
 def train_with_batches(inputfile, batch_size, restart=True, **kwargs):
-    idstring = "feature_cut_"+str(kwargs.get("cutoff"))+" "+kwargs.get("returntype")
+    idstring = "feature_cut_"+str(kwargs.get("cutoff"))+" "+kwargs.get("returntype", "set")
     dictionaryfile = os.path.join(os.pardir, idstring)
     if restart:
         gather_keywords_cutoff(inputfile, dictionaryfile, origin=kwargs.get("origin"), cutoff=kwargs.get("cutoff", 0))
@@ -151,14 +180,13 @@ def train_with_batches(inputfile, batch_size, restart=True, **kwargs):
             continuation = True
             infr = csv.reader(inf, delimiter="\t")
             lkd = pickle.load(kd)
+            pointer = 1
             while continuation:
                 data, labels, continuation = convert_to_npdata(infr, lkd, batchsize=batch_size, returntype=kwargs.get("returntype"))
-                if kwargs.get("returntype") == "dict":
-                    pass
-                else:
-                    for s in data:
-                        pass
-                train_data, train_labels, val_data, val_labels = splitdata(data, labels)
+                invecs = set_to_invec(data, labels, lkd)
+                store(invecs, INVEC_FILE)
+                print(invecs)
+                pointer += batch_size
                 print("runs completely")
                 #
                 # some machine learning function
@@ -167,4 +195,4 @@ def train_with_batches(inputfile, batch_size, restart=True, **kwargs):
         print("finito")
 
 inputfile = os.path.join(os.pardir, "trainColumnSwitched.tsv")
-train_with_batches(inputfile, 500, restart=True, origin="standard", cutoff=1, returntype="dict")
+train_with_batches(inputfile, 500, restart=True, origin="standard", cutoff=50)
