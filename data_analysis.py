@@ -57,7 +57,6 @@ def count_words(words):
     #test
 
 
-
 def load_data():
     """Return the trainingdata as an array."""
     data = []
