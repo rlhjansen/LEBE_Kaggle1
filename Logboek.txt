@@ -102,7 +102,7 @@ dit onafhankelijk van type data (woorden in titel & woorden in categoriëen hebb
 key:value
 tag:[(othertag, #), (yetAnotherTag, #), ...]
 
-10-1-2017
+10-1-2018
 
 Reitze:
 
@@ -124,7 +124,7 @@ Ik heb geprobeerd te werken met de data in KNIME, maar de data is te groot wat v
 KNIME werkt dus niet voor ons project.
 
 
-11-1-2017
+11-1-2018
 
 Reitze
 erachtergekomen dat er merknamen zijn die ongelukkig uitvallen, dat mensen de
@@ -138,7 +138,7 @@ woorden (met categorie als gehele woorden wellicht) als deel van de input.
 Shelby:
 Literatuuronderzoek gedaan naar vergelijkbare problemen en mogelijke plotjes bekeken voor de data
 
-12-1-2017
+12-1-2018
 
 Reitze
 Functies geschreven die
@@ -152,6 +152,36 @@ data analyseren om er plotjes van te maken, af hankelijk van de deelvragen
 Als deelvragen bekend zijn dan weet ik welke plotjes ik kan gebruiken
 labboek1 geschreven om in te leveren
 
-15-1-2017
+15-1-2018
 Shelby:
 Introductie en opdracht van verslag geschreven. Data visualiseren
+
+Maurits: 
+Bezig geweest met het inlezen van data om zelf mee te testen. 
+Kijken op welke manieren we het aantal woorden kunnen reduceren.
+
+16-1-2018
+
+Maurits:
+De manieren om woorden te reduceren in kaart brengen. 
+Hier de eerste stappen in nemen op een enkele string dmv meervoudsvormen enkelvoud te maken.
+Begin maken van het lemmatizen van werkwoorden.
+
+17-1-2018
+
+Maurits:
+Nog steeds bezig met het aantal woorden te reduceren.
+Uitzoeken of we synoniemen kunnen reduceren. Lijkt neit alleen lastig maar ook te veel tijd te kosten tijdens het inlezen.
+Achter gekomen dat meervoudsvormen net zoals werkwoorden op dezelfde manier gelemmatizeerd kunnen worden en dat op een string getest.
+
+18-1-2018
+
+Maurits:
+Stopwoorden uit de beschrijvinghalen en testen op een string.
+
+19-1-2018
+
+Maurits:
+Spellingfouten uit de string laten halen.
+Tijden van dit en het lemmatizeren testen.
+Lemmatizeren blijkt veel te veel tijd te kosten dus daar een oplossing voor bedenken.
