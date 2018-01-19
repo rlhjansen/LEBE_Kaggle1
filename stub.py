@@ -98,18 +98,17 @@ def store_data(shipping_data, condition_data, words, labels, word_map, cats, cat
     c_keys = cat_map.keys()
     with open(path, "ab") as vec_file:
         for j in range(len(words)):
+            wordindexes = [str(word_map.get(word)) for word in words[j] if word in w_keys]
+
 
             in_row_w_string = "\t".join([str(word_map.get(word)) for word in words[j] if word in w_keys])
             in_row_cats = "\t".join([str(cat_map.get(cat)) for cat in cats[j] if cat in c_keys])
-            in_row_shipping = "\t".join(shipping_data[j])
-            in_row_condition = "\t".join(condition_data[j])
+            in_row_shipping = str(shipping_data[j])
+            in_row_condition = str(condition_data[j])
             in_row_label = labels[j]
             invec = ",".join([in_row_w_string, in_row_cats, in_row_shipping, in_row_condition, in_row_label])+"\n"
 
-            print(j, invec)
-            for char in invec:
-                if char == 'c':
-                    raw_input()
+
             vec_file.write(invec)
 
         vec_file.close()
@@ -134,9 +133,6 @@ def retrieve_data(readfile, pointer, batch_size, specificslist, kwargs):
             linelist = alpha_processed.extend(numeric_processed)
             linevecs[j] = translate_line_input(linelist, specificslist, kwargs)
         return np.array(linevecs)
-
-
-
 
 
 def save_specifics(num_of_words, num_of_cats, filepath):
@@ -348,15 +344,15 @@ def main(**kwargs):
 
     batch_count, pointer, _, _, data, labels, continues, PATH_INPUT_VECTOR = prep()
     pointer+=1
-    while continues:
-        with open(path_store, 'rb') as readfile:
-            print("opening from", path_store)
-            np_vec = retrieve_data(readfile, pointer, BATCH_SIZE, specificslist, kwargs)
-            #print(np_vec)
+    with open(path_store, 'rb') as readfile:
+        while continues:
+            #print("opening from", path_store)
+            #np_vec = retrieve_data(readfile, pointer, BATCH_SIZE, specificslist, kwargs)
             #train_data, train_labels, val_data, val_labels = splitdata(data, ratio=0.7, train_val=True)
             X, Y = splitdata(data)
             if kwargs.get("test"):
                 break
+
 
 
 # returns string with path for specific run values
