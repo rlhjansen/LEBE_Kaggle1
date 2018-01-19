@@ -76,7 +76,7 @@ def extranct_line_features(row, *args):
         if key == "descrWords":
             wordset |= set(row[5].split(" "))  # woorden uit de beschrijving
         if key == "shipping":
-            wordset |= set(["shippingYes" if row[6] == 1 else "shippingNo"])
+            wordset |= set(["shippingYes" if row[6] == "1" else "shippingNo"])
     return wordset
 
 
