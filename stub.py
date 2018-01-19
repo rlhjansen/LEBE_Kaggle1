@@ -104,7 +104,7 @@ def store_data(shipping_data, condition_data, words, labels, word_map, cats, cat
             in_row_condition = "\t".join(condition_data[j])
             in_row_label = labels[j]
             invec = ",".join([in_row_w_string, in_row_cats, in_row_shipping, in_row_condition, in_row_label])+"\n"
-            print(invec)
+            #print(invec)
             vec_file.write(invec)
 
         vec_file.close()
@@ -118,13 +118,8 @@ def retrieve_data(readfile, pointer, batch_size, specificslist, kwargs):
             readfile.readline()
         for j in range(batch_size):
             rawline = readfile.readline()
-            print(len(rawline))
 
             comma_processed = rawline.split(",")
-            k = 0
-            for inst in comma_processed:
-                print(inst)
-                k += 1
 
             alpha_processed = [comma_processed[0].split("\t"),
                                comma_processed[1].split("\t")]
@@ -133,7 +128,6 @@ def retrieve_data(readfile, pointer, batch_size, specificslist, kwargs):
                                  int(comma_processed[4])]
             linelist = alpha_processed.extend(numeric_processed)
             linevecs[j] = translate_line_input(linelist, specificslist, kwargs)
-            print(linelist)
         return np.array(linevecs)
 
 
@@ -350,7 +344,7 @@ def main(**kwargs):
         with open(path_store, 'rb') as readfile:
             print("opening from", path_store)
             np_vec = retrieve_data(readfile, pointer, BATCH_SIZE, specificslist, kwargs)
-            print(np_vec)
+            #print(np_vec)
             #train_data, train_labels, val_data, val_labels = splitdata(data, ratio=0.7, train_val=True)
             X, Y = splitdata(data)
             if kwargs.get("test"):
