@@ -2,13 +2,11 @@ import pandas as pd
 import numpy as np
 import csv
 import nltk
-import inflect
 
 from nltk.corpus import stopwords
 from nltk.corpus import wordnet as wn
 from nltk.stem.wordnet import WordNetLemmatizer
 
-p = inflect.engine()
 
 txt = ("This keyboard is in great condition and works like it came out of the box. All of the ports are tested and work perfectly. The lights are customizable via the Razer Synapse app on your PC")
 

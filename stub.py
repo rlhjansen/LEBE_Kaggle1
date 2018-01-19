@@ -1,3 +1,4 @@
+from __future__ import print_function
 import numpy as np
 import re, csv
 from collections import Counter
@@ -104,7 +105,11 @@ def store_data(shipping_data, condition_data, words, labels, word_map, cats, cat
             in_row_condition = "\t".join(condition_data[j])
             in_row_label = labels[j]
             invec = ",".join([in_row_w_string, in_row_cats, in_row_shipping, in_row_condition, in_row_label])+"\n"
-            #print(invec)
+
+            print(j, invec)
+            for char in invec:
+                if char == 'c':
+                    raw_input()
             vec_file.write(invec)
 
         vec_file.close()
@@ -129,6 +134,9 @@ def retrieve_data(readfile, pointer, batch_size, specificslist, kwargs):
             linelist = alpha_processed.extend(numeric_processed)
             linevecs[j] = translate_line_input(linelist, specificslist, kwargs)
         return np.array(linevecs)
+
+
+
 
 
 def save_specifics(num_of_words, num_of_cats, filepath):
@@ -324,13 +332,12 @@ def main(**kwargs):
             cond_data = condition_data(data)
             store_data(ships_data, cond_data, words, labels, word_map, cats,
                        cat_map, path_store)
-            # print(in_vecs)
+            pointer += BATCH_SIZE
             data, labels, continues = load_data(pointer, BATCH_SIZE)
             print("done with batch", batch_count)
             batch_count += 1
 
             # print("Now starting batch", batch_count, "...")
-            pointer += BATCH_SIZE
 
     path_store = derive_filename_storage()
     path_specifics = path_store + "specifics"
@@ -340,6 +347,7 @@ def main(**kwargs):
     """ Returns data line by line """
 
     batch_count, pointer, _, _, data, labels, continues, PATH_INPUT_VECTOR = prep()
+    pointer+=1
     while continues:
         with open(path_store, 'rb') as readfile:
             print("opening from", path_store)
