@@ -51,7 +51,7 @@ def load_train(path, start, size):
                     break
                 vec[int(cat) + words_len] = 1.0
 
-            nums = l[2:-1]
+            nums = l[-3:-1]
             for j, num in enumerate(nums):
                 vec[j + words_len + cats_len] = float(num)
             label = float(l[-1][:-1])
@@ -106,17 +106,10 @@ def load_val(path, batch_size, file_size):
                     break
                 vec[int(cat) + words_len] = 1.0
 
-            wrong_line = False
-            nums = l[2:-1]
+            nums = l[-3:-1]
             for j, num in enumerate(nums):
-                if not nums[0].isdigit() or not nums[1].isdigit():
-                    wrong_line = True
-                else:
-                    vec[j + words_len + cats_len] = float(num)
+                vec[j + words_len + cats_len] = float(num)
 
-            if wrong_line:
-                print("\tfaulty line at", i)
-                continue
             label = float(l[-1][:-1])
 
             val_data.append(vec)
@@ -138,6 +131,7 @@ def main():
     past_err = 999999
     new_err = 999999
     regr = MLPRegressor()
+
     for _ in range(MAX_TRIES):
 
         for batch in range(num_batches):
@@ -157,7 +151,7 @@ def main():
             break
 
         print("Current error:", np.sqrt(new_err), "improvement", 
-              np.sqrt(past_err) - np.sqrt(new_err), "\n")
+                                    np.sqrt(past_err) - np.sqrt(new_err), "\n")
         past_err = new_err
 
     print(past_err)

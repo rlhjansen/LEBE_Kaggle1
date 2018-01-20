@@ -81,6 +81,10 @@ def filter_words(word_arr):
     """Takes a array of words and removes some of them, then returns the
     smaller array."""
     word_arr = word_arr[word_arr != '']
+    # This is a very ugly loop, if the nltk works, please remove it.
+    for word in word_arr:
+        if len(word) < 3:  # I chose 3 as an arbitrary length
+            word_arr = word_arr[word_arr != word]
     return word_arr
 
 
