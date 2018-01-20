@@ -9,9 +9,11 @@ from sklearn.neural_network import MLPRegressor
 import numpy as np
 
 
-PATH_TRAIN = "../input_train_50.tsv"
-PATH_VALIDATION = "../input_val_50.tsv"
-PATH_SPEC = "../input_specs_50.tsv"
+THRESH = 50
+PATH_TRAIN = "../input_train_" + str(THRESH) + ".tsv"
+PATH_VALIDATION = "../input_val_" + str(THRESH) + ".tsv"
+PATH_SPEC = "../input_specs_" + str(THRESH) + ".tsv"
+PATH_OUTPUT = "../output_nn_" + str(THRESH) + ".tsv"
 
 BATCH_SIZE = 10000  # Don't make this much bigger than 10,000
 TRAIN_SIZE = sum(1 for line in open(PATH_TRAIN))
@@ -117,6 +119,13 @@ def load_val(path, batch_size, file_size):
     return np.array(val_data), np.array(val_labels)
 
 
+def store(err, path):
+    """Store an array in a file."""
+    with open(path, "a") as f:
+        err = str(err) + '\t'
+        f.write(err)
+
+
 def test_regressor(regr, data, labels):
     """Return the average squared error of the regression neural network"""
     pred = regr.predict(data)
@@ -132,10 +141,11 @@ def main():
     new_err = 0
     regr = MLPRegressor()
 
-    for _ in range(MAX_TRIES):
+    for i in range(MAX_TRIES):
 
         for batch in range(num_batches):
-            print("\nStarting batch", batch + 1, "of", num_batches)
+            print("\nCurrent loop =", i)
+            print("Starting batch", batch + 1, "of", num_batches)
 
             print("Loading data...")
             train_data, train_labels = load_train(PATH_TRAIN, batch * BATCH_SIZE, BATCH_SIZE)
@@ -154,6 +164,7 @@ def main():
         print("Current error:", np.sqrt(new_err), "improvement",
                                     np.sqrt(past_err) - np.sqrt(new_err), "\n")
         past_err = new_err
+        store(new_err, PATH_OUTPUT)
 
     print("Done!\nThe regression has an average error of:", np.sqrt(new_err))
 
