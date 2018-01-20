@@ -185,3 +185,14 @@ Maurits:
 Spellingfouten uit de string laten halen.
 Tijden van dit en het lemmatizeren testen.
 Lemmatizeren blijkt veel te veel tijd te kosten dus daar een oplossing voor bedenken.
+
+Jochem: (dit heb ik deze week gedaan, niet deze dag)
+ - Een neuraal netwerk van sklearn uitgekozen voor gebruik.
+ - De zinnen die in train.tsv voorkomen omzetten in losse woorden.
+ - Alle data omzetten in input-vectoren die het neurale net kan lezen.
+ - Alle input-vectorer opslaan in twee bestanden: een voor trainen en een voor testen.
+ - Een data_analyse.py geschreven die:
+   - Het woordenaantal telt
+   - De lengte van de input-vectoren voorspelt aan de hand van de THRESH parameter
+        De THRESH parameter zegt hoe vaak een woord moet voorkomen in de train.tsv voordat het in een input-vector komt.
+   - Weergeeft hoeveel woorden, hoe vaak voorkomen.
