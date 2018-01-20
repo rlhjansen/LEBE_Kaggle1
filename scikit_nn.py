@@ -1,6 +1,6 @@
 """ This program trains a regressor on the dataset. Running MLPRegressor
 requires a sklearn version of 0.18 or higher.
-    This program expects a file that cPickle can open at location PATH_INPUT
+    This program expects a file that cPickle can open at location PATH_TRAIN
 cPickle needs to load a 2 dimensional numpy array, each row is a datapoint and
 the last element of each row should be the label."""
 from __future__ import print_function
@@ -9,33 +9,119 @@ from sklearn.neural_network import MLPRegressor
 import numpy as np
 
 
-PATH_INPUT = "../in_vec"
+PATH_TRAIN = "../input_train.tsv"
+PATH_VALIDATION = "../input_val.tsv"
+PATH_SPEC = "../input_specs.tsv"
+
+BATCH_SIZE = 10000  # Don't make this much bigger than 10,000
+TRAIN_SIZE = sum(1 for line in open(PATH_TRAIN))
+VAL_SIZE = sum(1 for line in open(PATH_TRAIN))
+VALIDATION_SIZE = sum(1 for line in open(PATH_VALIDATION))
+
+MAX_TRIES = 200
+CONVERGENCE = 0.01
 
 
-def load_data():
+def load_train(path, start, size):
     """Return the trainingdata as an array"""
-    in_vec = []
-    with open(PATH_INPUT, 'rb') as in_file:
-        in_vec = cPickle.load(in_file)
-    return in_vec
+    words_len, cats_len = load_specs(PATH_SPEC)
+    vec_len = words_len + cats_len + 2
+    in_vecs = []
+    labels = []
+    with open(path, 'rb') as in_file:
+
+        for i, l in enumerate(in_file):
+            if i < start:
+                continue
+            elif i >= start + size:
+                break
+
+            vec = np.zeros(vec_len)
+            l = l.split(',')
+
+            words = l[0].split('\t')
+            for word in words:
+                if word == '': # Sometimes a word is empty.
+                    continue
+                vec[int(word)] = 1.0
+
+            cats = l[1].split('\t')
+            for cat in cats:
+                if cat == '':  # Sometimes a category is empty.
+                    break
+                vec[int(cat) + words_len] = 1.0
+
+            nums = l[2:-1]
+            for j, num in enumerate(nums):
+                vec[j + words_len + cats_len] = float(num)
+            label = float(l[-1][:-1])
+
+            in_vecs.append(vec)
+            labels.append(label)
+    return np.array(in_vecs), np.array(labels)
 
 
-def split_labels(in_vec):
-    """Return the data for the nn and the label seperate from eachother"""
-    return in_vec[:, :-1], in_vec[:, -1]
+def load_specs(path):
+    """Return the number of words and number of categories in the file."""
+    words_len = 0
+    cats_len = 0
+    with open(path) as f:
+        l = f.readline()
+        l = l.split('\t')
+        words_len = int(l[0])
+        cats_len = int(l[1])
+    return words_len, cats_len
 
 
-def split_train_val(data, labels, size=0.7):
-    """Returns a training and a validation array"""
-    i = int(labels.shape[0] * size)
-    rand_data = np.random.permutation(data)
-    train_data = rand_data[:i]
-    val_data = rand_data[i:]
+def load_val(path, batch_size, file_size):
+    """Return some random rows from the validation file."""
+    if batch_size > file_size:
+        batch_size = file_size
+    
+    indexes = np.arange(file_size)
+    np.random.shuffle(indexes)
+    indexes = set(indexes[:batch_size])
+    words_len, cats_len = load_specs(PATH_SPEC)
+    vec_len = words_len + cats_len + 2
 
-    rand_labels = np.random.permutation(labels)
-    train_labels = rand_labels[:i]
-    val_labels = rand_labels[i:]
-    return train_data, train_labels, val_data, val_labels
+    val_data = []
+    val_labels = []
+    with open(path) as f:
+        for i, l in enumerate(f):
+            if i not in indexes:
+                continue
+
+            vec = np.zeros(vec_len)
+            l = l.split(',')
+
+            words = l[0].split('\t')
+            for word in words:
+                if word == '': # Sometimes a word is empty.
+                    continue
+                vec[int(word)] = 1.0
+
+            cats = l[1].split('\t')
+            for cat in cats:
+                if cat == '':  # Sometimes a category is empty.
+                    break
+                vec[int(cat) + words_len] = 1.0
+
+            wrong_line = False
+            nums = l[2:-1]
+            for j, num in enumerate(nums):
+                if not nums[0].isdigit() or not nums[1].isdigit():
+                    wrong_line = True
+                else:
+                    vec[j + words_len + cats_len] = float(num)
+
+            if wrong_line:
+                print("\tfaulty line at", i)
+                continue
+            label = float(l[-1][:-1])
+
+            val_data.append(vec)
+            val_labels.append(label)
+    return np.array(val_data), np.array(val_labels)
 
 
 def test_regressor(regr, data, labels):
@@ -44,25 +130,38 @@ def test_regressor(regr, data, labels):
     return np.sum(np.power(pred - labels, 2))
 
 
-def train_regressor(data, labels):
-    """Return a regression neural network that is fitted to the data"""
-    regr = MLPRegressor()
-    regr.fit(data, labels)
-    return regr
-
-
 def main():
     """The main function of the program"""
-    print("Loading data...")
-    input_data = load_data()
-    data, labels = split_labels(input_data)
-    train_data, train_labels, val_data, val_labels = split_train_val(data, labels)
+    num_batches = int(TRAIN_SIZE / BATCH_SIZE)
+    print("The program will run in", num_batches)
 
-    print("Done!\nTraining neural network...")
-    regr = train_regressor(train_data, train_labels)
-    print("Done!\nTesting the network...")
-    sq_e = test_regressor(regr, val_data, val_labels)
-    print("Done!\nThe regression has an average error of:", np.sqrt(sq_e))
+    past_err = 999999
+    new_err = 999999
+    regr = MLPRegressor()
+    for _ in range(MAX_TRIES):
+
+        for batch in range(num_batches):
+            print("\nStarting batch", batch + 1, "of", num_batches)
+
+            print("Loading data...")
+            train_data, train_labels = load_train(PATH_TRAIN, batch * BATCH_SIZE, BATCH_SIZE)
+
+            print("Training neural network...")
+            regr.partial_fit(train_data, train_labels)
+
+        print("\nTesting the network...")
+        val_data, val_labels = load_val(PATH_VALIDATION, BATCH_SIZE, VAL_SIZE)
+        new_err = test_regressor(regr, val_data, val_labels)
+
+        if past_err - new_err < CONVERGENCE:
+            break
+
+        print("Current error:", np.sqrt(new_err), "improvement", 
+              np.sqrt(past_err) - np.sqrt(new_err), "\n")
+        past_err = new_err
+
+    print(past_err)
+    print("Done!\nThe regression has an average error of:", np.sqrt(new_err))
 
 
 main()
