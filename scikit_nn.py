@@ -9,9 +9,9 @@ from sklearn.neural_network import MLPRegressor
 import numpy as np
 
 
-PATH_TRAIN = "../input_train.tsv"
-PATH_VALIDATION = "../input_val.tsv"
-PATH_SPEC = "../input_specs.tsv"
+PATH_TRAIN = "../input_train_50.tsv"
+PATH_VALIDATION = "../input_val_50.tsv"
+PATH_SPEC = "../input_specs_50.tsv"
 
 BATCH_SIZE = 10000  # Don't make this much bigger than 10,000
 TRAIN_SIZE = sum(1 for line in open(PATH_TRAIN))
