@@ -9,17 +9,16 @@ from nltk.corpus import stopwords
 
 PATH_TRAIN = "../train.tsv"
 PATH_TEST = "../test.tsv"
-PATH_WORD_FILE = "../words.tsv"
 COLUMN_LABEL = 5
-BATCH_SIZE = 10000  # Don't make this number much larger than 100000
+BATCH_SIZE = 100000  # Don't make this number much larger than 100000
 
 # The following constants are the columns in the "data" variable
 COLUMN_NAME = 0
 COLUMN_CONDITION = 1
 COLUMN_CATEGORY = 2
 COLUMN_BRAND = 3
-COLUMN_SHIPPING = 4
-COLUMN_DESCRIPTION = 5
+COLUMN_SHIPPING = 5
+COLUMN_DESCRIPTION = 6
 
 # These characters will be ignored by the neural net when training data
 IGN_CHAR = [',', ':', ';', '.', '(', ')', '\'', '"', '!', '?', '*', '&', '^']
@@ -35,15 +34,15 @@ def count_words(words):
     count1 = Counter(count0.values())
 
     # How long would the vector matrix be if words that occur <= than n_times
-    #num = len(count0.keys())
-    #print(num)
-    #for n in range(1, 51):
-    #    num -= count1[n]
-    #    print("The vector would be", num, "long for n value:", n)
+    num = len(count0.keys())
+    print(num)
+    for n in range(1, 51):
+        num -= count1[n]
+        print("The vector would be", num, "long for n value:", n)
 
     # The most common words
-    for word, n in count0.most_common(10):
-        print(word, "occurs", n, "times")
+    # for word, n in count0.most_common(10):
+    #     print(word, "occurs", n, "times")
 
     # A plot a about the distribution of word use.
     #num = len(count0)
@@ -57,21 +56,31 @@ def count_words(words):
     #test
 
 
-def load_data():
+def load_data(start, size):
     """Return the trainingdata as an array."""
     data = []
-    labels = []
+    stop = False
+
     with open(PATH_TRAIN) as f:
-        f.readline()
-        for _ in range(BATCH_SIZE):
-            line = f.readline()
-            line = line[:-1]
-            line = line.split("\t")
-            label = float(line[COLUMN_LABEL])
-            line = line[1:COLUMN_LABEL] + line[COLUMN_LABEL+1:]
-            data.append(np.array(line))
-            labels.append(label)
-    return np.array(data), np.array(labels)
+
+        i = 0
+        for row in f:
+            if i < start:
+                i += 1
+                continue
+            elif i >= start + size:
+                break
+
+            row = row[:-1]
+            row = row.split("\t")
+            row = row[1:]
+            data.append(np.array(row))
+            i += 1
+
+        if i < start + size:
+            stop = True
+
+    return stop, np.array(data)
 
 
 def sentence_to_words(data):
@@ -89,6 +98,22 @@ def sentence_to_words(data):
     return np.array(words)
 
 
+
+def show_counter(word_count, thresh):
+    """Count how many words occur at least 'thresh' times."""
+    vec_len = 0
+    avoid_len = 0
+    
+    for word in word_count.keys():
+        if word_count[word] > thresh:
+            vec_len += 1
+        else:
+            avoid_len += 1
+
+    return vec_len, avoid_len
+
+
+
 def store(obj, path):
     """Store an object in a file with cPickle."""
     with open(path, 'wb') as out_file:
@@ -104,12 +129,30 @@ def string_occurance(string, words):
     return np.array(indexes)
 
 
+def update_counter(words, word_count):
+    for row in words:
+        for word in row:
+            word_count[word] += 1
+
+    return word_count
+
+
 def main():
     """The main function of the program."""
-    data, labels = load_data()
-    words = sentence_to_words(data)
-    # store(words, PATH_WORD_FILE)
-    count_words(words)
-    #indexes = string_occurance('xl', words)
+    word_count = Counter()
+
+    print("start counting words...")
+    pointer = 1
+    batch = 1
+    stop = False
+    while not stop:
+        print("... Batch", batch, "currently", show_counter(word_count, 50), "words...")
+        stop, data = load_data(pointer, BATCH_SIZE)
+        words = sentence_to_words(data)
+        word_count = update_counter(words, word_count)
+        pointer += BATCH_SIZE
+        batch += 1
+    print("... Done!", show_counter(word_count, 50), "words.")
+
 
 main()

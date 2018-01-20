@@ -38,16 +38,18 @@ def categorical_data(data):
         string = row[COLUMN_CATEGORY]
         string = re.compile(r'[^\s\w_]+').sub(' ', string)  # removes all non-alfanumeric characters
         string = string.lower()
-        cat_arr = np.array(string.split(' '))
-        cat_arr = filter_words(cat_arr)
+        s = set(stopwords.words('english'))
+        cat_arr = np.array(filter(lambda w: not w in s, string.split()))
+        # cat_arr = filter_words(cat_arr)
         cats.append(cat_arr)
     return np.array(cats)
 
 
 def count_words(words, word_count):
-    """Show plots and statistics on the worduse."""
-    for _, row in np.ndenumerate(words):
-        word_count.update(row)
+    """Keep track of word occurance in a counter."""
+    for row in words:
+        for word in row:
+            word_count[word] += 1
     return word_count
 
 
@@ -121,42 +123,57 @@ def load_data(start, size):
     return stop, np.array(data)
 
 
+def show_counter(word_count, thresh):
+    """Count how many words occur at least 'thresh' times."""
+    vec_len = 0
+    avoid_len = 0
+    
+    for word in word_count.keys():
+        if word_count[word] > thresh:
+            vec_len += 1
+        else:
+            avoid_len += 1
+
+    return vec_len, avoid_len
+
+
 def make_maps():
     """Create a word map that assigns unique integers to words."""
     batch = 1
     pointer = 1
-    word_map = dict()
     word_count = Counter()
-    cat_map = dict()
     cat_count = Counter()
 
     print("Making a wordmap:")
     stop = False
     while not stop:
-        print("\nNow loading batch", batch, "...")
+        print("\nNow batch", batch, "currenlty", show_counter(word_count, 50), "words...")
         stop, data = load_data(pointer, BATCH_SIZE)
         print("... Substracting the words ...")
         words = words_from_data(data)
+        print("... Substracting the categories ...")
         cats = categorical_data(data)
-        print("... Counting words ...")
+        print("... Counting")
         word_count = count_words(words, word_count)
         cat_count = count_words(cats, cat_count)
-        print("... Mapping words ...")
-        word_map = map_words(word_count, word_map)
-        cat_map = map_words(cat_count, cat_map)
-        print("... Currently", len(word_map.keys()), "words are in the map...")
-        print("... And", len(cat_map.keys()), "categories are in the map.")
+
         batch += 1
         pointer += BATCH_SIZE
+
+    print("\nDone!\n... Mapping words ...")
+    word_map = map_words(word_count, dict())
+    cat_map = map_words(cat_count, dict())
+    print("... Currently", len(word_map.keys()), "words are in the map...")
+    print("... And", len(cat_map.keys()), "categories are in the map")
 
     return word_map, cat_map
 
 
 def map_words(word_count, word_map, thresh=THRESH):
     """Gives each word in the array a unique int in a dictionary"""
-    n_words = len(word_map.keys())
+    n_words = 0
     for word in word_count.keys():
-        if word_count[word] >= thresh and not word_map.has_key(word):
+        if word_count[word] > thresh:
             word_map[word] = n_words
             n_words += 1
     return word_map
@@ -201,8 +218,9 @@ def words_from_data(data):
                   row[COLUMN_DESCRIPTION])
         string = re.compile(r'[^\s\w_]+').sub(' ', string)  # removes all non-alfanumeric characters
         string = string.lower()
-        word_arr = np.array(string.split(' '))
-        word_arr = filter_words(word_arr)
+        s = set(stopwords.words('english'))
+        word_arr = np.array(filter(lambda w: not w in s, string.split()))
+        # word_arr = filter_words(word_arr)
         words.append(word_arr)
     return np.array(words)
 

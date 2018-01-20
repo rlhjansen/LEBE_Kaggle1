@@ -120,7 +120,7 @@ def load_val(path, batch_size, file_size):
 def test_regressor(regr, data, labels):
     """Return the average squared error of the regression neural network"""
     pred = regr.predict(data)
-    return np.sum(np.power(pred - labels, 2))
+    return np.sum(np.power(pred - labels, 2)) / len(labels)
 
 
 def main():
@@ -128,8 +128,8 @@ def main():
     num_batches = int(TRAIN_SIZE / BATCH_SIZE)
     print("The program will run in", num_batches)
 
-    past_err = 999999
-    new_err = 999999
+    past_err = long(999999)
+    new_err = 0
     regr = MLPRegressor()
 
     for _ in range(MAX_TRIES):
@@ -148,13 +148,13 @@ def main():
         new_err = test_regressor(regr, val_data, val_labels)
 
         if past_err - new_err < CONVERGENCE:
+            print("Convergence has reached:", past_err - new_err)
             break
 
-        print("Current error:", np.sqrt(new_err), "improvement", 
+        print("Current error:", np.sqrt(new_err), "improvement",
                                     np.sqrt(past_err) - np.sqrt(new_err), "\n")
         past_err = new_err
 
-    print(past_err)
     print("Done!\nThe regression has an average error of:", np.sqrt(new_err))
 
 
