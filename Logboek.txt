@@ -196,3 +196,7 @@ Jochem: (dit heb ik deze week gedaan, niet deze dag)
    - De lengte van de input-vectoren voorspelt aan de hand van de THRESH parameter
         De THRESH parameter zegt hoe vaak een woord moet voorkomen in de train.tsv voordat het in een input-vector komt.
    - Weergeeft hoeveel woorden, hoe vaak voorkomen.
+
+
+22-1-2018:
+Shelby: Ik ben begonnen met het schrijven van het verslag
