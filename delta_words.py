@@ -4,6 +4,7 @@ from __future__ import print_function, division
 from pathlib import Path
 import re
 from collections import Counter
+import cPickle
 import numpy as np
 from nltk.corpus import stopwords
 
@@ -18,6 +19,8 @@ PATH_CLASSES = "../split_classes/"
 
 # The output file
 PATH_OUT = "../delta_vec_" + str(VEC_LEN) + ".tsv"
+PATH_LMAP = "../delta_labels_" + str(VEC_LEN) + ".tsv"
+PATH_DMAP = "../delta_occ_" + str(VEC_LEN) + ".tsv"
 
 # The following constants are the columns in each "data" variable
 COLUMN_NAME = 0
@@ -70,6 +73,12 @@ def count_words(path_obj):
     return word_occ, labels
 
 
+def delta_function(word_occ, tot_word_occ, word):
+    """The function determining which words are least evenly distributed among
+    classes."""
+    return abs(word_occ[word] - tot_word_occ[word])
+
+
 def get_class_name(path):
     """Return the name of the class from a path string."""
     class_name = path.split('/')[-1]
@@ -111,6 +120,23 @@ def load_data(path, start, size):
     return stop, np.array(data)
 
 
+def load_delta(path):
+    """Return the delta vector stored at 'path'"""
+    delta_vec = []
+    with open(path) as f:
+        for word in f:
+            delta_vec.append(word[:-1])
+    return np.array(delta_vec)
+
+
+def load_pickle(path):
+    """Return the python object located at 'path' using cPickle"""
+    obj = None
+    with open(path) as f:
+        obj = cPickle.load(f)
+    return obj
+
+
 def load_words(path_obj, start, size):
     """Return the words and labels from a file. Also return if the end of the 
     file is reached."""
@@ -144,12 +170,76 @@ def load_words(path_obj, start, size):
     return stop, np.array(words), np.array(labels)
 
 
+def make_delta():
+    """Create a vector with words scoring highest in the delta function."""
+    tot_word_occ = count_data(PATH_TRAIN)
+    delta_occ = init_delta_occ(tot_word_occ)
+
+    pathlist = Path(PATH_CLASSES)
+    print("Start comparing words with the classes.")
+
+    for path_obj in pathlist.iterdir():
+        class_name = get_class_name(str(path_obj))
+        print("Comparing words from \"" + class_name + "\"")
+        word_occ, class_labels = count_words(path_obj)
+        for word in word_occ:
+            delta_occ[word] += delta_function(word_occ, tot_word_occ, word)
+
+    print("\nBiggest delta words:")
+    max_deltas = sorted(delta_occ, key=delta_occ.__getitem__, reverse=True)
+    max_deltas = max_deltas[:VEC_LEN]
+    for word in max_deltas:
+        print(word, delta_occ[word])
+    return np.array(max_deltas)
+
+
+def map_delta_occ(delta_vec):
+    """Return a dictionary that matches class names with an array with the
+    relative occurance of each word in the delta vec. Also make """
+    delta_map = dict()
+    label_map = dict()
+
+    print("Start mapping the delta occurance with each class.")
+    pathlist = Path(PATH_CLASSES)
+    for path_obj in pathlist.iterdir():
+        class_name = get_class_name(str(path_obj))
+        delta_occ = np.zeros(len(delta_vec))
+        num_rows = 0
+        mean_label = 0
+
+        print("Now mapping:", '"' + class_name + '"')
+        pointer = 0
+        stop = False
+        while not stop:
+            stop, words, labels = load_words(path_obj, pointer, BATCH_SIZE)
+            for row in words:
+                num_rows += 1
+                for word in row:
+                    delta_occ[delta_vec == word] += 1
+
+            mean_label += sum(labels)
+            pointer += BATCH_SIZE
+        
+        mean_label = mean_label / num_rows
+        label_map[class_name] = mean_label
+        delta_occ = delta_occ / num_rows
+        delta_map[class_name] = delta_occ
+    
+    return delta_map, label_map
+
+
 def normalize_counter(num_words, word_count):
     """Return a dictionary that maps a word with its relative use."""
     word_occ = dict()
     for word in word_count.keys():
         word_occ[word] = word_count[word] / num_words
     return word_occ
+
+
+def store_pickle(path, obj):
+    """Store an object at the location given with 'path' using cPickle"""
+    with open(path, 'wb') as f:
+        cPickle.dump(obj, f)
 
 
 def store_vec(vec):
@@ -212,31 +302,32 @@ def words_from_data(data):
     return np.array(strings)
 
 
-def main():
+def main(vec_path=False, dmap_path=False, lmap_path=False):
     """The main function of the program"""
-    tot_word_occ = count_data(PATH_TRAIN)
-    delta_occ = init_delta_occ(tot_word_occ)
+    delta_vec = np.array([])
+    if vec_path:
+        print("Loading the delta from path", '"' + vec_path + '"')
+        delta_vec = load_delta(vec_path)
+    else:
+        print("Creating a new delta")
+        delta_vec = make_delta()
+        store_vec(delta_vec)
 
-    pathlist = Path(PATH_CLASSES)
-    print("\nStart comparing words with the classes.")
+    delta_map = dict()
+    label_map = dict()
+    if vec_path and dmap_path and lmap_path:
+        print("\nLoading the delta map and the label map")
+        delta_map = load_pickle(dmap_path)
+        label_map = load_pickle(lmap_path)
+    else:
+        print("\nCreating a delta map and a label map")
+        delta_map, label_map = map_delta_occ(delta_vec)
+        store_pickle(PATH_DMAP, delta_map)
+        store_pickle(PATH_LMAP, label_map)
 
-    for path_obj in pathlist.iterdir():
-        class_name = get_class_name(str(path_obj))
-        print("Comparing words from \"" + class_name + "\"")
-        word_occ, class_labels = count_words(path_obj)
-        for word in word_occ:
-            delta_occ[word] += abs(word_occ[word] - tot_word_occ[word])
-
-    print("\nBiggest delta words:")
-    max_deltas = sorted(delta_occ, key=delta_occ.__getitem__, reverse=True)
-    max_deltas = max_deltas[:VEC_LEN]
-    for word in max_deltas:
-        print(word, delta_occ[word])
-
-    store_vec(max_deltas)
-
-    print("\nCalculating vector occurance")
-    print(vec_occ(max_deltas))
+    for class_name in delta_map:
+        print(class_name, label_map[class_name])
+        print(delta_map[class_name])
 
 
-main()
+main("../delta_vec_100.tsv", "../delta_occ_100.tsv", "../delta_labels_100.tsv")
