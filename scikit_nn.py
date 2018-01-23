@@ -144,7 +144,7 @@ def main():
     for i in range(MAX_TRIES):
 
         for batch in range(num_batches):
-            print("\nCurrent loop =", i)
+            print("\nCurrent loop =", i + 1)
             print("Starting batch", batch + 1, "of", num_batches)
 
             print("Loading data...")
@@ -157,7 +157,7 @@ def main():
         val_data, val_labels = load_val(PATH_VALIDATION, BATCH_SIZE, VAL_SIZE)
         new_err = test_regressor(regr, val_data, val_labels)
 
-        if past_err - new_err < CONVERGENCE:
+        if abs(past_err - new_err) < CONVERGENCE:
             print("Convergence has reached:", past_err - new_err)
             break
 

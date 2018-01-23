@@ -147,7 +147,7 @@ def make_maps():
     print("Making a wordmap:")
     stop = False
     while not stop:
-        print("\nNow batch", batch, "currenlty", show_counter(word_count, 50), "words...")
+        print("\nNow batch", batch, "currenlty", show_counter(word_count, THRESH), "words...")
         stop, data = load_data(pointer, BATCH_SIZE)
         print("... Substracting the words ...")
         words = words_from_data(data)
