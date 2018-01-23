@@ -12,6 +12,8 @@ from nltk.corpus import stopwords
 BATCH_SIZE = 100000  # Don't make this much larger than 100000
 THRESH = 50
 VEC_LEN = 100
+TRAIN_RATIO = 0.8  # The ratio train / total
+CLASS_DEPTH = 2  # We don't take very niche subcategories.
 
 # The input files
 PATH_TRAIN = "../train.tsv"
@@ -21,6 +23,8 @@ PATH_CLASSES = "../split_classes/"
 PATH_OUT = "../delta_vec_" + str(VEC_LEN) + ".tsv"
 PATH_LMAP = "../delta_labels_" + str(VEC_LEN) + ".tsv"
 PATH_DMAP = "../delta_occ_" + str(VEC_LEN) + ".tsv"
+PATH_OUT_TRAIN = "../delta_train_" + str(VEC_LEN) + ".tsv"
+PATH_OUT_VAL = "../delta_val_" + str(VEC_LEN) + ".tsv"
 
 # The following constants are the columns in each "data" variable
 COLUMN_NAME = 0
@@ -79,6 +83,45 @@ def delta_function(word_occ, tot_word_occ, word):
     return abs(word_occ[word] - tot_word_occ[word])
 
 
+def dwords_from_data(data, class_names, delta_vec, delta_map):
+    """Return an array of vectors with the delta word-occurence for each row."""
+    delta_words = []
+    for i, row in enumerate(data):
+        string = (row[COLUMN_NAME] + ' ' + row[COLUMN_BRAND] + ' ' +
+                  row[COLUMN_DESCRIPTION])
+        string = re.compile(r'[^\s\w_]+').sub(' ', string)  # removes all non-alfanumeric characters
+        string = string.lower()
+        word_arr = np.array(string.split(' '))
+        dword_vec = - delta_map[str(class_names[i])]
+        for word in word_arr:
+            if word in delta_vec:
+                dword_vec[delta_vec == word] += 1.0
+        delta_words.append(dword_vec)
+    return np.array(delta_words)
+
+
+def get_class(data):
+    """Return an array of class names from the data."""
+    conditions = data[:, COLUMN_CONDITION]
+    categories = data[:, COLUMN_CATEGORY]
+    shipping = data[:, COLUMN_SHIPPING]
+
+    classes = []
+    for i, _ in enumerate(conditions):
+        name = ""
+        name += conditions[i] + '_'
+
+        category = categories[i].split('/')
+        category = category[:CLASS_DEPTH]
+        for cat in category:
+            name += cat + '-'
+        name = name[:-1] + '_'
+
+        name += shipping[i]
+        classes.append(name)
+    return np.array(classes)
+
+
 def get_class_name(path):
     """Return the name of the class from a path string."""
     class_name = path.split('/')[-1]
@@ -91,6 +134,17 @@ def init_delta_occ(word_occ):
     for key in word_occ.keys():
         delta_occ[key] = 0.0
     return delta_occ
+
+
+def labels_from_data(data, class_names, label_map):
+    """Return an array with the prizes matching the rows"""
+    labels = []
+    for i, row in enumerate(data):
+        label = np.array([0.0, 0.0])
+        label[0] = label_map[class_names[i]]
+        label[1] = row[COLUMN_PRICE]
+        labels.append(label)
+    return labels
 
 
 def load_data(path, start, size):
@@ -236,6 +290,52 @@ def normalize_counter(num_words, word_count):
     return word_occ
 
 
+def preprocess(path_in, path_train, path_val, delta_vec, delta_map, label_map):
+    """Make and store vectors that a neural network can use."""
+    batch = 1
+    pointer = 1 + BATCH_SIZE * 2
+    stop = False
+    while not stop:
+        print("\nNow loading batch", batch, "...")
+        stop, data = load_data(path_in, pointer, BATCH_SIZE)
+        train, val = split_train_val(data, TRAIN_RATIO)
+
+        print("... Extracting class values ...")
+        class_train = get_class(train)
+        class_val = get_class(val)
+        dwords_train = dwords_from_data(train, class_train, delta_vec, delta_map)
+        dwords_val = dwords_from_data(val, class_val,  delta_vec, delta_map)
+        labels_train = labels_from_data(train, class_train, label_map)
+        labels_val = labels_from_data(val, class_val, label_map)
+
+        print("... Converting to input ...")
+        in_train = to_input(dwords_train, labels_train)
+        in_val = to_input(dwords_val, labels_val)
+
+        print("... Storing")
+        store_arr(path_train, in_train)
+        store_arr(path_val, in_val)
+
+        batch += 1
+        pointer += BATCH_SIZE
+
+
+def split_train_val(data, ratio):
+    """Return a set for training and a set for validation"""
+    np.random.shuffle(data)
+    index = int(len(data) * ratio)
+    train = data[:index]
+    val = data[index:]
+    return train, val
+
+
+def store_arr(path, arr):
+    """Store an array in a file given by path"""
+    with open(path, 'a') as f:
+        for row in arr:
+            f.write((row) + '\n')
+
+
 def store_pickle(path, obj):
     """Store an object at the location given with 'path' using cPickle"""
     with open(path, 'wb') as f:
@@ -247,6 +347,20 @@ def store_vec(vec):
     with open(PATH_OUT, 'w') as f:
         for word in vec:
             f.write(word + '\n')
+
+
+def to_input(words, labels):
+    """Return an array with strings that will be stored in the input file."""
+    in_vec = []
+    for i, row in enumerate(words):
+        in_str = ""
+        for elem in row:
+            in_str += str(elem) + '\t'
+        for label in labels[i]:
+            in_str += str(label) + '\t'
+        in_str = in_str[:-1]
+        in_vec.append(in_str)
+    return np.array(in_vec)
 
 
 def update_counter(words, word_count):
@@ -325,9 +439,8 @@ def main(vec_path=False, dmap_path=False, lmap_path=False):
         store_pickle(PATH_DMAP, delta_map)
         store_pickle(PATH_LMAP, label_map)
 
-    for class_name in delta_map:
-        print(class_name, label_map[class_name])
-        print(delta_map[class_name])
+    print("\nPreprocessing the data")
+    preprocess(PATH_TRAIN, PATH_OUT_TRAIN, PATH_OUT_VAL, delta_vec, delta_map, label_map)
 
 
 main("../delta_vec_100.tsv", "../delta_occ_100.tsv", "../delta_labels_100.tsv")
