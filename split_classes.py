@@ -13,7 +13,7 @@ PATH_PRE = "../split_classes/"
 PATH_POST = ".tsv"
 
 # Important parameters on how the program is run.
-BATCH_SIZE = 100000  # Don't make this much larger than 100000
+BATCH_SIZE = 1000  # Don't make this much larger than 100000
 THRESH = 50
 MAX_DEPTH = 2  # We don't take very niche subcategories.
 

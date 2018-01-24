@@ -3,13 +3,15 @@ from __future__ import print_function
 import re
 from collections import Counter
 import numpy as np
+import nltk
+nltk.download('stopwords')
 from nltk.corpus import stopwords
 
 PATH_TRAIN = "../train.tsv"
 PATH_TEST = "../test.tsv"
-BATCH_SIZE = 100000  # Don't make this number much larger than 100000
+BATCH_SIZE = 1000  # Don't make this number much larger than 100000
 DATA_SIZE = sum(1 for line in open(PATH_TRAIN))  # Number of \n in train file
-THRESH = 50  # How often needs a word to occur before it is used
+THRESH = 400 # How often needs a word to occur before it is used
 TRAIN_RATIO = 0.8  # The ratio train validation
 
 # The following constants are the columns in each "data" variable
