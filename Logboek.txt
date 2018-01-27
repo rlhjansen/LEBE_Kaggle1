@@ -200,3 +200,12 @@ Jochem: (dit heb ik deze week gedaan, niet deze dag)
 
 22-1-2018:
 Shelby: Ik ben begonnen met het schrijven van het verslag
+
+reitze:
+voor woensdag:
+ - onderzoek gedaan naar implementatie voor word2vec in dit neural network, uiteindelijk te traag.
+
+na woensdag:
+ - uitgezocht hoe de kernel van kaggle werkt
+ - onsoepelheden uit de thresh variant van het neurale netwerk gehaald ivm deze kernel
+ - onderdeel voor preprocessing & discussie geschreven voor het verslag
