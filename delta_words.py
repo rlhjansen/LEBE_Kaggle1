@@ -10,7 +10,7 @@ from nltk.corpus import stopwords
 
 # Important parameters on how the program is run.
 BATCH_SIZE = 100000  # Don't make this much larger than 100000
-THRESH = 50
+THRESH = 100
 VEC_LEN = 100
 TRAIN_RATIO = 0.8  # The ratio train / total
 CLASS_DEPTH = 2  # We don't take very niche subcategories.
@@ -192,7 +192,7 @@ def load_pickle(path):
 
 
 def load_words(path_obj, start, size):
-    """Return the words and labels from a file. Also return if the end of the 
+    """Return the words and labels from a file. Also return if the end of the
     file is reached."""
     words = []
     labels = []
@@ -443,4 +443,4 @@ def main(vec_path=False, dmap_path=False, lmap_path=False):
     preprocess(PATH_TRAIN, PATH_OUT_TRAIN, PATH_OUT_VAL, delta_vec, delta_map, label_map)
 
 
-main("../delta_vec_100.tsv", "../delta_occ_100.tsv", "../delta_labels_100.tsv")
+main()
