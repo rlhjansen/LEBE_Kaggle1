@@ -9,10 +9,10 @@ from nltk.corpus import stopwords
 
 PATH_TRAIN = "../train.tsv"
 PATH_TEST = "../test.tsv"
-BATCH_SIZE = 1000  # Don't make this number much larger than 100000
+BATCH_SIZE = 2000  # Don't make this number much larger than 100000
 DATA_SIZE = sum(1 for line in open(PATH_TRAIN))  # Number of \n in train file
 THRESH = 400 # How often needs a word to occur before it is used
-TRAIN_RATIO = 0.8  # The ratio train validation
+TRAIN_RATIO = 1.0  # The ratio train validation
 
 # The following constants are the columns in each "data" variable
 COLUMN_NAME = 0
@@ -30,7 +30,7 @@ IGN_CHAR = [',', ':', ';', '.', '(', ')', '\'', '"', '!', '?', '*', '&', '^']
 PATH_INPUT_TRAIN = "../input_train_" + str(THRESH) + ".tsv"
 PATH_INPUT_VAL = "../input_val_" + str(THRESH) + ".tsv"
 PATH_INPUT_SPECS = "../input_specs_" + str(THRESH) + ".tsv"
-
+PATH_INPUT_TEST = "../input_test_" + str(THRESH) + ".tsv"
 
 def categorical_data(data):
     """Return a vectorized form of the category column"""
@@ -239,6 +239,35 @@ def main():
 
     stop = False
     while not stop:
+        """ preparing NN train input """
+        print("\nNow loading batch", batch, "...")
+        stop, data = load_data(pointer, BATCH_SIZE)
+        train, val = split_train_val(data, TRAIN_RATIO)
+
+        print("... converting to input ...")
+        num_train = numeric_data(train)
+        num_val = numeric_data(val)
+        words_train = words_from_data(train)
+        words_val = words_from_data(val)
+        cats_train = categorical_data(train)
+        cats_val = categorical_data(val)
+        labels_train = labels_from_data(train)
+        labels_val = labels_from_data(val)
+        in_train = data_to_input(num_train, words_train, cats_train,
+                                 labels_train, word_map, cat_map)
+        in_val = data_to_input(num_val, words_val, cats_val,
+                               labels_val, word_map, cat_map)
+
+        print("... storing")
+        store(in_train, PATH_INPUT_TRAIN)
+        store(in_val, PATH_INPUT_VAL)
+
+        batch += 1
+        pointer += BATCH_SIZE
+
+
+    while not stop:
+        """ preparing NN test input """
         print("\nNow loading batch", batch, "...")
         stop, data = load_data(pointer, BATCH_SIZE)
         train, val = split_train_val(data, TRAIN_RATIO)

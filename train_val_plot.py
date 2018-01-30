@@ -161,11 +161,12 @@ def main(layers, startfile=None):
             print("...Training neural network...")
             regr.partial_fit(train, labels)
             batches_passed += 1
-            if batch % ERROR_INTERVAL == 0:
+            if batches_passed % ERROR_INTERVAL == 0:
                 print("...Saving and testing, don't interrupt the program...")
                 x_val += ERROR_INTERVAL
                 save_stuff(regr, x_val)
                 print("...Done")
+
 
 
 

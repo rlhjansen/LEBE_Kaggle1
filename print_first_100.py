@@ -20,8 +20,7 @@ def printrows(infile, N):
         tsvs = csv.reader(tsvin, delimiter='\t')
         i = 0
         for row in tsvs:
-            regexrow = [number_pattern.sub('', row[0]), name_discr_pattern.sub('', row[1]), number_pattern.sub('', row[2]), category_pattern.sub('', row[3]), name_discr_pattern.sub('', row[4]), name_discr_pattern.sub('', row[5]), row[6], number_pattern.sub('',row[7])]
-            print([j.strip() for j in regexrow])
+
 
             print(row)
             i += 1
@@ -29,4 +28,4 @@ def printrows(infile, N):
                 break
         tsvin.close()
 
-printrows("trainColumnSwitched.tsv", 100)
+printrows("test.tsv", 100)

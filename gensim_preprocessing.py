@@ -2,6 +2,7 @@ from __future__ import print_function
 import gensim, logging, re
 from time import time
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
+import numpy as np
 
 
 
@@ -59,18 +60,15 @@ class GensimSents(object):
 
 def train_gensim_word2vec():
     sentences = GensimSents(PATH_WORD2VEC_TRAIN)
-    model = gensim.models.Word2Vec(sentences, min_count=1)
+    model = gensim.models.Word2Vec(sentences)
     model.save('train_model')
     del model
 
 
-doc = ["a", "nike", " ", "air", "q", "l", "k", "fd", "f", "d"]
+doc = ["n", "i", "k", "e", "nike"]
 
 #train_gensim_word2vec()
 MODEL = gensim.models.Word2Vec.load('train_model', mmap='r')
+
 words = filter(lambda x: x in MODEL.wv.vocab, doc)
-for word in words:
-    time1 = time()
-    print(MODEL[word], word)
-    time2 = time()
-    print("time = ", time2-time1)
+
