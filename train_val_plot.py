@@ -100,11 +100,11 @@ def save_stuff(regr, cur_x):
 
     train_err = test_regressor(regr, PATH_TRAIN_TST)
     print("Train error:", train_err)
-    write_value(train_err, VAL_ERROR_FILE)
+    write_value(train_err, TRAIN_ERROR_FILE)
 
     val_err = test_regressor(regr, PATH_VAL)
     print("Validation error:", val_err)
-    write_value(val_err, TRAIN_ERROR_FILE)
+    write_value(val_err, VAL_ERROR_FILE)
 
     write_value(cur_x, XF)
 
