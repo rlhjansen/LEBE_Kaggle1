@@ -1,19 +1,5 @@
-""" --- README ---
-        At the bottom, a main function is called. You can call it with parameters
-    or without. You should ONLY call it without parameters when running for
-    the first time, if you don't, everything will fuck up and you'll need to 
-    reset (explained below)
-        So, if you run the program for a next time, call it with parameters.
-    (the function with parameters is commented out, just un-comment that and 
-    remove the un-parametered main()).
-        If you want to RESET, remove or move the following files away from the 
-    directory they're currently in:
-     - 'delta_train_tst_[VEC_LEN].tsv'
-     - 'NN_pickle_[LAYERS]_layer.pkl'
-     - 'train_error_values.txt'
-     - 'val_error_values.txt'
-     - 'x_values_written.txt'
-    After a reset, you need to run the unparameterized main()"""
+"""Dubbelcheck your BATCH_SIZE before running. It needs te be 1000"""
+
 # essential imports
 from __future__ import print_function
 from sklearn.neural_network import MLPRegressor
@@ -38,7 +24,7 @@ XF = "../x_values_written.txt"
 SAVED_NN = "../NN_pickle_" + str(LAYERS) + "_layers_.pkl"
 
 # Important parameters on which the program is run
-BATCH_SIZE = 1000  # Don't make this number much larger than 100000
+BATCH_SIZE = 1000  # Don't change this without notifying the group
 TRAIN_TST_SIZE = 10000  # How many rows do we test when calculating error
 THRESH = 100  # How often needs a word to occur before it is used
 MAX_TRIES = 100
