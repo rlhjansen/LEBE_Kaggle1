@@ -17,7 +17,7 @@ PATH_TRAIN = "../delta_train_" + str(VEC_LEN) + ".tsv"
 PATH_VAL = "../delta_val_" + str(VEC_LEN) + ".tsv"
 PATH_TRAIN_TST = "../delta_train_tst_" + str(VEC_LEN) + ".tsv"
 TRAIN_SIZE = sum(1 for line in open(PATH_TRAIN))  # Number of \n in train file
-VAL_SIZE = sum(1 for line in open(PATH_VAL)) #Number of \n in train file
+VAL_SIZE = sum(1 for line in open(PATH_VAL)) #Number of \n in val file
 
 # Output files
 LAYERS = 10  # Determines which data is loaded
@@ -97,8 +97,15 @@ def make_train_test(path):
 def save_stuff(regr, cur_x):
     """Save the progress of the regressor"""
     joblib.dump(regr, SAVED_NN)
-    write_value(test_regressor(regr, PATH_TRAIN_TST), VAL_ERROR_FILE)
-    write_value(test_regressor(regr, PATH_VAL), TRAIN_ERROR_FILE)
+
+    train_err = test_regressor(regr, PATH_TRAIN_TST)
+    print("Train error:", train_err)
+    write_value(train_err, VAL_ERROR_FILE)
+
+    val_err = test_regressor(regr, PATH_VAL)
+    print("Validation error:", val_err)
+    write_value(val_err, TRAIN_ERROR_FILE)
+
     write_value(cur_x, XF)
 
 
@@ -131,10 +138,11 @@ def test_regressor(regr, path):
 #                                                       #
 #########################################################
 
-def main(layers, startfile=None):
+def main(layers, startfile=None, train_test=True):
     """The main function of the program"""
-    print("Making a test file for the training set.")
-    make_train_test(PATH_TRAIN_TST)
+    if train_test:
+        print("Making a test file for the training set.")
+        make_train_test(PATH_TRAIN_TST)
 
     num_batches = int(TRAIN_SIZE / BATCH_SIZE)
     print("The program will run in", num_batches)
@@ -151,23 +159,17 @@ def main(layers, startfile=None):
         shuffle(shuffled_batches)
         batches_passed = 0
         for batch in shuffled_batches:
-            print("\nCurrent loop =", i + 1)
-            print("Current layers:", layers)
-            print("Loading batch", batches_passed + 1, "of", str(num_batches) + "...")
 
-            #Todo: deze laadfunctie moet dus geschreven worden (waarmee ik bedoel dat je de delta load (of wat voor naam je het ook geeft hier moet verwerken, de traindata en train labels die hieruit komen moeten geschrikt zijn om in de partial fit te stoppen)
             train, labels, _ = load_data(PATH_TRAIN, batch * BATCH_SIZE, BATCH_SIZE)
-
-            print("...Training neural network...")
             regr.partial_fit(train, labels)
             batches_passed += 1
             if batches_passed % ERROR_INTERVAL == 0:
+                print("\nProgress:")
+                print("Loop", i + 1, ",  batch", batches_passed + 1, "of", num_batches)
                 print("...Saving and testing, don't interrupt the program...")
                 x_val += ERROR_INTERVAL
                 save_stuff(regr, x_val)
                 print("...Done")
-
-
 
 
 TRAINLAYERS = [100]*LAYERS
