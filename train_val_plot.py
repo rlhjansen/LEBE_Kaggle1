@@ -1,8 +1,19 @@
-""" This program trains a regressor on the dataset. Running MLPRegressor
-requires a sklearn version of 0.18 or higher.
-    This program expects a file that cPickle can open at location PATH_TRAIN
-cPickle needs to load a 2 dimensional numpy array, each row is a datapoint and
-the last element of each row should be the label."""
+""" --- README ---
+        At the bottom, a main function is called. You can call it with parameters
+    or without. You should ONLY call it without parameters when running for
+    the first time, if you don't, everything will fuck up and you'll need to 
+    reset (explained below)
+        So, if you run the program for a next time, call it with parameters.
+    (the function with parameters is commented out, just un-comment that and 
+    remove the un-parametered main()).
+        If you want to RESET, remove or move the following files away from the 
+    directory they're currently in:
+     - 'delta_train_tst_[VEC_LEN].tsv'
+     - 'NN_pickle_[LAYERS]_layer.pkl'
+     - 'train_error_values.txt'
+     - 'val_error_values.txt'
+     - 'x_values_written.txt'
+    After a reset, you need to run the unparameterized main()"""
 # essential imports
 from __future__ import print_function
 from sklearn.neural_network import MLPRegressor
@@ -178,4 +189,4 @@ TRAINLAYERS = [100]*LAYERS
 # main(TRAINLAYERS, startfile=SAVED_NN) # If starting warm. Else use next line
 
 # Run this if it is your first time running
-# main(TRAINLAYERS)
+main(TRAINLAYERS)
