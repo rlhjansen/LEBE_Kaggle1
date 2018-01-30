@@ -5,20 +5,20 @@ import matplotlib.pyplot as plt
 # globale variablen hebben dezelfde naam als in train_val_plot.py
 #
 
-VAL_ERROR_FILE = "./val_error_values.txt"
-TRAIN_ERROR_FILE = "./train_error_values.txt"
-XF = "./x_values_written.txt"
+VAL_ERROR_FILE = "../val_error_values.txt"
+TRAIN_ERROR_FILE = "../train_error_values.txt"
+XF = "../x_values_written.txt"
 
 
 #Todo: vul dit in om een grafiek op te slaan
-SAVE_NAME = "my_neural_network_results.png" #must end in .png
+SAVE_NAME = "../my_neural_network_results.png" #must end in .png
 
 
 def get_vals_from_file(some_file):
     value_list = []
     with open(some_file, 'r') as f:
         for line in f:
-            value_list.append(int(line[:-1]))
+            value_list.append(float(line[:-1]))
     return value_list
 
 def construe_plot():
@@ -39,3 +39,6 @@ def construe_plot():
     fig1 = plt.gcf()
     fig1.savefig(SAVE_NAME, dpi=100)
     plt.show()
+
+
+construe_plot()

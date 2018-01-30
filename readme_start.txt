@@ -60,4 +60,14 @@ Maak een directory die heet: split_classes in de map boven de git
          - 'train_error_values.txt'
          - 'val_error_values.txt'
          - 'x_values_written.txt'
+
+ > python make_error_graph.py
+     - Deze graph + VEC_LEN, LAYERS en Loopcount (hoeveel loops heb je gerunt)
+       zijn onze data.
+     - Je kan nu 2 dingen aanpassen:
+         - LAYERS: Verander deze in train_val_plot.py (regel 20), reset
+           train_val_plot.py en run hem. 
+         - VEC_LEN: Verander deze in delta_word.py (regel 14) en 
+           train_val_plot.py (regel 12), reset delta_word.py en
+           train_val_plot.py en run ze opnieuw.
         
