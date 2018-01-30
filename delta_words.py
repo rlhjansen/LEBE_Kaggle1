@@ -441,6 +441,7 @@ def main(vec_path=False, dmap_path=False, lmap_path=False):
 
     print("\nPreprocessing the data")
     preprocess(PATH_TRAIN, PATH_OUT_TRAIN, PATH_OUT_VAL, delta_vec, delta_map, label_map)
+    print("Done! No errors occured")
 
 
 main()

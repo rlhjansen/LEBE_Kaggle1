@@ -96,11 +96,11 @@ def save_stuff(regr, cur_x):
     joblib.dump(regr, SAVED_NN)
 
     train_err = test_regressor(regr, PATH_TRAIN_TST)
-    print("Train error:", train_err)
+    print("\tTrain error:", train_err)
     write_value(train_err, TRAIN_ERROR_FILE)
 
     val_err = test_regressor(regr, PATH_VAL)
-    print("Validation error:", val_err)
+    print("\tValidation error:", val_err)
     write_value(val_err, VAL_ERROR_FILE)
 
     write_value(cur_x, XF)
@@ -166,7 +166,7 @@ def main(layers, startfile=None, train_test=True):
                 print("...Saving and testing, don't interrupt the program...")
                 x_val += ERROR_INTERVAL
                 save_stuff(regr, x_val)
-                print("...Done")
+                print("...Done saving.")
 
 
 TRAINLAYERS = [100]*LAYERS

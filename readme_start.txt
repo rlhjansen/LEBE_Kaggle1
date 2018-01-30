@@ -1,4 +1,7 @@
+Check voordat je een programma runt altijd of de output files al bestaan!
+
 Maak een directory die heet: split_classes in de map boven de git
+
  > python split_classes.py
      - Memory error? Ga naar BATCH_SIZE (regel 16) en maak die kleiner. Reset
        voordat je het programma opnieuw runt.
@@ -9,6 +12,9 @@ Maak een directory die heet: split_classes in de map boven de git
      - Memory error? Ga naar BATCH_SIZE (regel 12) en maak die kleiner, reset
        vervolgens.
      - De waarde VEC_LEN zullen we (wellicht) veranderen, die staat op regel 14
+     - Krijg je een keyError? Dan zou het kunnen dat je train.tsv niet up to 
+       date is met je split_classes. Reset split_classes.py en reset 
+       delta_word.py. Run vervolgens vanaf het begin af aan.
      - RESET: Voor de reset is het belangrijk tijdens welk proces je het
        programma hebt gestopt.
         - tijdens counting: Je hoeft niks te doen
