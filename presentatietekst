@@ -1,0 +1,62 @@
+Presentatie Kaggle 1: Mercari Price Suggestion
+
+Dia 1: Introductie
+De Kaggle opdracht ‘Mercari Price Suggestion Challenge’ wordt georganiseerd door Mercari, een winkel software applicatie
+van Japan dat vergelijkbaar is met Marktplaats. Kaggle is een platform voor analytische competities met machine
+learning problemen dat bedrijven en organisaties helpt om de beste modellen te verkrijgen voor het voorspellen en
+beschrijven van hun datasets. Mercari biedt een manier om producten via een mobiele apparaat te kopen en verkopen.
+Mercari wilt een nauwkeurige prijs suggestie bieden aan de verkopers, dus als je product op de website wilt aanbieden
+maar niet weet voor welke prijs dan is er een mogelijkheid om een prijs suggestie te krijgen. Mercari vraagt in de
+competitie om hier een algoritme voor te schrijven dat automatisch de juiste productprijzen voorstelt gebaseerd op de
+ingevoerde gegevens.
+
+Dia 2: Dataset (1)
+Hier is een voorbeeld van de training dataset te zien met de variabelen.  De gegevens die ingevuld worden door de
+verkoper zijn: de naam, staat van het product, merknaam, categorie, informatie over de verzending en de beschrijving.
+
+Dia 3: Dataset (2)
+Hier is nog een voorbeeld te zien van de dataset waarbij te zien is dat de beschrijving van het product vrij kort kan
+zijn, maar ook erg lang.
+
+Dia 4: Price
+De prijs van het product is de variabele die we willen voorspellen.  De prijzen in de dataset zijn de daadwerkelijke
+prijzen waarvoor het product verkocht is. De gemiddelde prijs is 26.73USD, maar door de prijs van dure producten, zoals
+een Chanel schoudertas die verkocht is voor meer dan 2000 dollar, is de verdeling sterk naar links. Om de verdeling naar
+het midden te krijgen hebben we de log prijs genomen.
+
+Dia 5: Item_condition_id
+De variabele item_condition_id heeft een waarde van 1 tot en met 5. 1 staat voor nieuw, 2 zo goed als nieuw, 3 goed, 4
+redelijk en 5 is slecht. Producten met een waarde van 4 en 5 zijn er relatief weinig.
+Waarde 5 is een apart geval. Je zou denken dat de gemiddelde prijs hiervan het laagst ligt, omdat het slechte producten
+zijn. De gemiddelde prijs ligt hier juist het hoogst, maar het heeft wel het minst aantal producten. Dit kan komen
+doordat het een erg gewild en duur product is.
+
+Dia 6: Shipping
+Als de verzendkosten van het product betaald wordt door de koper wordt het aangegeven met de waarde 0 en als de
+verzendkosten van het product betaald wordt door de verkoper wordt het aangegeven met de waarde 1. Van de meeste
+producten die verkocht zijn, heeft de koper zelf de verzendkosten betaald. Naar verwachting zou de prijs hoger liggen
+als de verzendkosten door de verkoper betaald zou worden, maar dit blijkt juist niet zo te zijn. De gemiddelde log prijs
+bij waarde 1 ligt lager dan het gemiddelde bij waarde 0, dat betekent dat bij een hogere prijs de verzendkosten door de
+kopers betaald worden.
+
+Dia 7: Brand_name
+Iets meer dan 600 000 producten hebben geen merknaam, doordat het merk niet is ingevuld door de verkoper.
+Er zijn in totaal 4809 verschillende merken. Hier zijn de 15 meest verkochte merken te zien.
+
+Dia 8: Category_name (1)
+De producten zijn verdeeld in categorieën. De variabele category name bestaat uit een hoofdcategorie, gevolgd door twee
+specifiekere subcategorieën. Hier is een voorbeeld te zien. In de dataset staat er tussen de categorieën zo een slash
+teken. Beauty is hier in dit geval de hoofdcategorie, makeup de eerste subcategorie en lips de tweede subcategorie
+
+Dia 9: Category_name (2)
+Er zijn 10 hoofdcategorieën. De meeste producten zitten in de categorie women. Hier is de verdeling van de categorieën
+met de log prijs te zien. De mediaan van de categorie men ligt het hoogst.
+
+Dia 10: Category_name (3)
+De eerste subcategorie bevat 113 categorieën en de tweede subcategorie bevat er 870. Hier zijn 15 eerste en tweede
+subcategorieën te zien waar de meeste producten van zijn verkocht.
+
+Dia 11: Item_description
+De meest voorkomende product beschrijving is “No description yet”. Links is de verdeling van de lengte van de
+beschrijving over het aantal producten weergeven. Het verband tussen de prijs en lengte in de rechter grafiek zegt niet
+genoeg over de invloed van de lengte van de beschrijving op de prijs.
