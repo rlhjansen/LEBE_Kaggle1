@@ -174,5 +174,8 @@ def main(layers, startfile=None, train_test=True):
 
 TRAINLAYERS = [100]*LAYERS
 
+# Run this if you have run this program before
 # main(TRAINLAYERS, startfile=SAVED_NN) # If starting warm. Else use next line
-main(TRAINLAYERS)
+
+# Run this if it is your first time running
+# main(TRAINLAYERS)
