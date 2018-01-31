@@ -5,9 +5,9 @@ import matplotlib.pyplot as plt
 # globale variablen hebben dezelfde naam als in train_val_plot.py
 #
 
-VAL_ERROR_FILE = "../val_error_values.txt"
-TRAIN_ERROR_FILE = "../train_error_values.txt"
-XF = "../x_values_written.txt"
+VAL_ERROR_FILE = "../val_error_values_THRESH100.txt"
+TRAIN_ERROR_FILE = "../train_error_values_THRESH10.txt"
+XF = "../x_values_written_THRESH10.txt"
 
 
 #Todo: vul dit in om een grafiek op te slaan

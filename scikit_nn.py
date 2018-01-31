@@ -199,7 +199,6 @@ def main(layers):
     regr = MLPRegressor(hidden_layer_sizes=layers)
 
     for i in range(MAX_TRIES):
-
         for batch in range(num_batches):
             print("\nCurrent loop =", i + 1)
             print("Current layers:", layers)

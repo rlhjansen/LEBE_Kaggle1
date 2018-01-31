@@ -9,7 +9,7 @@ import numpy as np
 from nltk.corpus import stopwords
 
 # Important parameters on how the program is run.
-BATCH_SIZE = 100000  # Don't make this much larger than 100000
+BATCH_SIZE = 5000  # Don't make this much larger than 100000
 THRESH = 100
 VEC_LEN = 100
 TRAIN_RATIO = 0.8  # The ratio train / total
