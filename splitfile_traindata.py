@@ -1,11 +1,11 @@
 
 
-completefile = "../input_train_100.tsv"
-train_write = "../train_part_100.tsv"
-val_write = "../val_part_100.tsv"
+completefile = "./input_train_100.tsv"
+train_write = "./train_part_100.tsv"
+val_write = "./val_part_100.tsv"
 
-train_test_write = "../train_test_100.tsv"
-val_test_write = "../val_test_100.tsv"
+train_test_write = "./train_test_100.tsv"
+val_test_write = "./val_test_100.tsv"
 
 
 file_length_complete = sum(1 for line in open(completefile))
