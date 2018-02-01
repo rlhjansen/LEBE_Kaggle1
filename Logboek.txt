@@ -230,3 +230,16 @@ Jochem:
 
 
 
+
+
+Reitze:
+ - pycharm met Github repository opgezet voor maurits en shelby.
+ - Functies voor het preprocessen van de input voor de threshold versie van het neural network geschreven.:
+1) Trainingset omzetten in een dictionary van input waarden
+2) Deze waarden schoonmaken (gekke tekens eruit)
+3) Deze geconverteerd naar input voor het threshold neural network
+ - Onderzoek gedaan naar implementatie voor word2vec in dit neural network, zou met de implementatie van threshhold een te grote input-vector leveren (ivm trainingsduur die dan verhondervoudigt werd) dus dit is achterwege gelaten.
+ - Functies geschreven en herschreven die resultaten (validation error & train error) van de neurale netwerken verzamelt en opslaat.
+ - Code compatibel gemaakt met de kaggle kernel (python 2.7 -> python 3.6 (lamda functies en I/O)).
+ - Functies geschreven voor het maken van grafieken.
+ - Allround helpen met bugs fiksen.
