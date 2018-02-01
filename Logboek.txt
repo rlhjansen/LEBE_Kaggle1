@@ -209,3 +209,24 @@ na woensdag:
  - uitgezocht hoe de kernel van kaggle werkt
  - onsoepelheden uit de thresh variant van het neurale netwerk gehaald ivm deze kernel
  - onderdeel voor preprocessing & discussie geschreven voor het verslag
+
+
+--- logboek totaaltje ---
+Jochem:
+ - Ben er een week later bij gekomen (wellicht vermeldenswaardig)
+ - Eerste implementatie van de regressor gecodeerd, daar waren we er achter gekomen dat we geen strings in de regressor konden gooien.
+ - Programma geschreven dat alle woorden uit de data haalt, daar nummers van maakt en dat opslaat.
+ - Programma geschreven dat kijkt voor alle woorden hoe vaak ze voorkomen om de data te kunnen analyseren.
+ - Programma geschreven dat de opslag van woord-nummers optimaliseerd door niet de volledige binaire vectoren op te slaan, maar alleen de indexen van op welke plek een vector een '1' moet bevatten.
+ - Programma geschreven dat datarijen sorteert op 'classen' een class is een combinatie van 'shipping', 'categories' en 'condition'.
+ - Programma geschreven dat het gemiddelde gebruik van een woord berekend.
+ - Programma geschreven dat woorden sorteert op hun delta functie, dit wordt berekend door het gemiddelde woordgebruik over de hele data set af te trekken van het gemiddelde woordgebruik over alle classes en daar de absolute waarde van te nemen.
+ - De regressor aangepast zodat het data kan gebruiken van de "thresh"-, en "delta"preprocessers. Dit getest en data uit gehaald. Later heeft Reitze een betere versie geschreven.
+ - Programma geschreven dat woorden sorteert op hun invloed op de prijs, maar dit niet af gekregen om het mee te kunnen nemen in het testen.
+ - Programma geschreven dat algemeen nuttige gegevens laat zien over de train.tsv aangezien het niet mogelijk was om deze te openen met gedit of libreOffice.
+ - De dia's over de resultaten van de presentatie voorbereid.
+ - De alinea's onder de kopjes 'delta' en 'methoden' geschreven in het verslag.
+
+
+
+
