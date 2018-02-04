@@ -171,7 +171,7 @@ Begin maken van het lemmatizen van werkwoorden.
 
 Maurits:
 Nog steeds bezig met het aantal woorden te reduceren.
-Uitzoeken of we synoniemen kunnen reduceren. Lijkt neit alleen lastig maar ook te veel tijd te kosten tijdens het inlezen.
+Uitzoeken of we synoniemen kunnen reduceren. Lijkt niet alleen lastig maar ook te veel tijd te kosten tijdens het inlezen.
 Achter gekomen dat meervoudsvormen net zoals werkwoorden op dezelfde manier gelemmatizeerd kunnen worden en dat op een string getest.
 
 18-1-2018
@@ -228,8 +228,21 @@ Jochem:
  - De alinea's onder de kopjes 'delta' en 'methoden' geschreven in het verslag.
 
 
-
-
+Maurits:
+- Gekeken wat we kunnen toepassen op de dataset qua Natural Language Processing
+ * Alles apart getimed 
+ * Vooral stopwoorden zijn efficient 
+- Bezig geweest met Data visualisatie door te gaan kijken naar het woordgebruik.
+- Eerst kijken naar hoe we dit het beste kunnen visualiseren
+  * Hoe vaak wordt een bepaald woord gebruikt
+  * Wat is de gemiddelde prijs over de hele dataset
+  * Hoe duur is de gemiddelde prijs indien een woord voorkomt in de beschrijving/merk/naam
+    -- Kleine funtie schrijven die voor een woord kijkt wat de gemiddelde prijs is wanneer een woord voorkomt
+    -- Verschil berekenen tussen de gemiddelde prijs over de dataset en gemiddelde 
+       prijs als woord voorkomt van verschillende woorden
+  * 
+- Verslag stukje 'Woordgebruik tov prijs' geschreven
+- Verslag stukje 'Natural Language Processing' geschreven
 
 
 Reitze:
